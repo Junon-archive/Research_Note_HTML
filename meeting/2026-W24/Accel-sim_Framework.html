@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 연구 미팅 — 2026.06.11</title>
+
+<!-- Pretendard (한글 본문) + KaTeX (수식). 오프라인이면 시스템 폰트로 대체됨 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#1a1a1f;
+    --muted:#6b7280;
+    --faint:#9ca3af;
+    --hair:#e8e8ec;
+    --hair-strong:#d6d6db;
+    --accent:#2545a6;
+    --accent-soft:#eef1fb;
+    --key:#2545a6;   --key-bg:#eef1fb;
+    --next:#0f766e;  --next-bg:#eafaf6;
+    --open:#b45309;  --open-bg:#fff7ec;
+    --recap:#57606a; --recap-bg:#f5f6f8;
+    --code-bg:#f6f7f9;
+    --code-ink:#27303f;
+    --maxw:840px;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Menlo",Consolas,monospace;
+    --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,
+           "Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:#eceef1;
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.72;
+    letter-spacing:-0.003em;
+    word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .doc{
+    counter-reset:sec;
+    max-width:var(--maxw);
+    margin:40px auto;
+    background:var(--paper);
+    padding:64px 68px 72px;
+    border:1px solid var(--hair);
+    border-radius:4px;
+    box-shadow:0 1px 2px rgba(20,20,30,.04),0 12px 40px rgba(20,20,30,.06);
+  }
+
+  /* ---------- Header ---------- */
+  .doc-eyebrow{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  .doc-title{
+    font-size:30px;
+    font-weight:700;
+    line-height:1.25;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+  }
+  .doc-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 30px;
+    padding-bottom:22px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:6px;
+  }
+  .doc-meta div{font-size:13.5px;line-height:1.5;}
+  .doc-meta .k{color:var(--faint);font-weight:500;margin-right:7px;}
+  .doc-meta .v{color:var(--ink);font-weight:600;}
+
+  /* ---------- Table of contents ---------- */
+  .toc{
+    margin:26px 0 4px;
+    padding:18px 20px;
+    background:var(--recap-bg);
+    border:1px solid var(--hair);
+    border-radius:6px;
+  }
+  .toc h4{
+    margin:0 0 10px;font-size:11.5px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  }
+  .toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  .toc li{counter-increment:toc;font-size:14px;margin:0 0 7px;break-inside:avoid;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);
+    color:var(--accent);font-variant-numeric:tabular-nums;
+    font-weight:700;font-size:11.5px;margin-right:9px;}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;}
+  .toc a:hover{border-bottom-color:var(--accent);}
+
+  /* ---------- Sections ---------- */
+  section.block{
+    counter-increment:sec;
+    margin:38px 0 0;
+    scroll-margin-top:20px;
+  }
+  section.block > h2{
+    position:relative;
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:-0.015em;
+    line-height:1.35;
+    margin:0 0 16px;
+    padding-bottom:9px;
+    border-bottom:1px solid var(--hair-strong);
+  }
+  section.block > h2::before{
+    content:counter(sec,decimal-leading-zero);
+    display:inline-block;
+    min-width:1.9em;
+    margin-right:.55em;
+    color:var(--accent);
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  h3{font-size:16.5px;font-weight:700;margin:24px 0 9px;letter-spacing:-0.01em;}
+  h4{font-size:14.5px;font-weight:700;color:var(--muted);margin:18px 0 7px;}
+
+  p{margin:0 0 13px;}
+  a{color:var(--accent);}
+  strong{font-weight:700;}
+  mark{background:#fff2a8;padding:0 .15em;border-radius:2px;}
+
+  ul,ol{margin:0 0 14px;padding-left:1.35em;}
+  li{margin:0 0 6px;}
+  li::marker{color:var(--accent);}
+  ul ul,ol ol,ul ol,ol ul{margin:6px 0 6px;}
+
+  hr{border:0;border-top:1px solid var(--hair);margin:28px 0;}
+
+  /* ---------- Callout sections (semantic) ---------- */
+  .block--callout{
+    padding:20px 24px 6px;
+    border:1px solid var(--hair);
+    border-left:4px solid var(--recap);
+    border-radius:0 7px 7px 0;
+    background:var(--recap-bg);
+  }
+  .block--callout > h2{
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:12px;
+    font-size:18px;
+  }
+  .tag{
+    display:inline-block;
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px;border-radius:20px;margin-right:10px;vertical-align:2px;
+  }
+  .block--key   {border-left-color:var(--key);   background:var(--key-bg);}
+  .block--key  .tag{background:var(--key);color:#fff;}
+  .block--next  {border-left-color:var(--next);  background:var(--next-bg);}
+  .block--next .tag{background:var(--next);color:#fff;}
+  .block--open  {border-left-color:var(--open);  background:var(--open-bg);}
+  .block--open .tag{background:var(--open);color:#fff;}
+  .block--recap {border-left-color:var(--recap); background:var(--recap-bg);}
+  .block--recap .tag{background:var(--recap);color:#fff;}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{overflow-x:auto;margin:6px 0 18px;}
+  table.data{
+    width:100%;border-collapse:collapse;font-size:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  table.data thead th{
+    background:#f3f4f7;color:var(--ink);font-weight:700;text-align:left;
+    padding:9px 13px;border-bottom:2px solid var(--hair-strong);
+    white-space:nowrap;
+  }
+  table.data td{padding:9px 13px;border-bottom:1px solid var(--hair);vertical-align:top;}
+  table.data tbody tr:last-child td{border-bottom:1px solid var(--hair-strong);}
+  table.data td.num,table.data th.num{text-align:right;}
+  table.data tbody tr:hover{background:#fafafb;}
+  table.data caption{
+    caption-side:bottom;text-align:left;color:var(--muted);
+    font-size:12.5px;margin-top:8px;
+  }
+
+  /* ---------- Code ---------- */
+  code{
+    font-family:var(--mono);font-size:.88em;
+    background:var(--code-bg);color:#b3186d;
+    padding:.12em .38em;border-radius:4px;
+  }
+  pre{
+    margin:6px 0 18px;background:var(--code-bg);color:var(--code-ink);
+    border:1px solid var(--hair);border-radius:8px;
+    padding:15px 17px;overflow-x:auto;line-height:1.6;
+  }
+  pre code{background:none;color:inherit;padding:0;font-size:13px;}
+  .codecard{margin:6px 0 18px;}
+  .codecard .codecard__name{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    background:#eceef1;border:1px solid var(--hair);border-bottom:none;
+    padding:6px 14px;border-radius:8px 8px 0 0;
+  }
+  .codecard pre{margin:0;border-radius:0 0 8px 8px;}
+
+  kbd{
+    font-family:var(--mono);font-size:.8em;background:#fff;color:var(--ink);
+    border:1px solid var(--hair-strong);border-bottom-width:2px;border-radius:5px;
+    padding:1px 6px;
+  }
+
+  /* ---------- Figures / quotes ---------- */
+  figure{margin:14px 0 18px;text-align:center;}
+  figure img{max-width:100%;border:1px solid var(--hair);border-radius:6px;}
+  figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;}
+  blockquote{
+    margin:14px 0;padding:4px 18px;color:#3f4754;
+    border-left:3px solid var(--accent);background:var(--accent-soft);
+    border-radius:0 6px 6px 0;
+  }
+  blockquote p:last-child{margin-bottom:0;}
+
+  /* ---------- Footer ---------- */
+  .doc-footer{
+    margin-top:48px;padding-top:16px;border-top:1px solid var(--hair);
+    font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:680px){
+    .doc{padding:36px 22px 44px;margin:0;border-radius:0;border-left:none;border-right:none;}
+    body{font-size:15.5px;}
+    .doc-title{font-size:25px;}
+    .toc ol{columns:1;}
+    section.block > h2{font-size:19px;}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff;}
+    .doc{box-shadow:none;border:none;margin:0;max-width:none;padding:0 6mm;}
+    section.block{break-inside:avoid-page;}
+    .block--callout,table.data,pre,figure{break-inside:avoid;}
+    a{color:var(--ink);text-decoration:none;}
+    .toc{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<article class="doc">
+
+  <header class="doc-header">
+    <p class="doc-eyebrow">Weekly Research Meeting</p>
+    <h1 class="doc-title">Accel-Sim 프레임워크 이해</h1>
+    <div class="doc-meta">
+      <div><span class="k">작성자</span><span class="v">Junon</span></div>
+      <div><span class="k">지도교수</span><span class="v">홍정규 교수님</span></div>
+      <div><span class="k">주차</span><span class="v">2026-W24</span></div>
+      <div><span class="k">일자</span><span class="v">2026.06.11</span></div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <h4>목차</h4>
+    <ol>
+      <li><a href="#s-why">왜 Accel-Sim인가?</a></li>
+      <li><a href="#s-trace">Trace-Driven 방식</a></li>
+      <li><a href="#s-components">Accel-Sim 4개의 구성요소</a></li>
+      <li><a href="#s-relation">GPGPU-Sim 4.x와의 관계</a></li>
+      <li><a href="#s-arch">지원 아키텍처</a></li>
+      <li><a href="#s-accuracy">정확도 및 신뢰도</a></li>
+      <li><a href="#s-compare">다른 시뮬레이터와 비교</a></li>
+      <li><a href="#s-limit">한계</a></li>
+      <li><a href="#s-ref">레퍼런스</a></li>
+      <li><a href="#s-appendix">어펜딕스</a></li>
+    </ol>
+  </nav>
+
+  <!-- 01 -->
+  <section id="s-why" class="block">
+    <h2>왜 Accel-Sim인가?</h2>
+    <h3>GPGPU-Sim 3.x의 방식</h3>
+    <p><strong>PTX(가상 ISA, vISA) 기반의 실행-구동(execution-driven)</strong> 방식을 사용함.</p>
+    <h3>문제점</h3>
+    <ul>
+      <li>
+        <strong>PTX는 컴파일러 중간 표현이지 실제 HW가 실행하는 코드가 아님.</strong>
+        <ul>
+          <li>실제 GPU는 SASS를 실행.</li>
+          <li>PTX → SASS 컴파일 과정에서 레지스터 할당·스케줄링이 달라지므로 시뮬레이션 결과가 실리콘과 불일치.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>cuBLAS, cuDNN, PyTorch 같은 라이브러리는 PTX를 노출하지 않음.</strong>
+        <ul>
+          <li>바이너리로만 배포되기 때문에 PTX 기반 시뮬레이터로 실행 불가.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Execution-driven 방식은 GPU 기능 모델(functional model)이 반드시 필요.</strong>
+        <ul>
+          <li>새 아키텍처가 나올 때마다 기능 모델부터 다시 구현해야 함을 의미.</li>
+        </ul>
+      </li>
+    </ul>
+    <h3>의문 — Trace-driven도 단점이 있지 않을까?</h3>
+    <p>맞음. 실제 HW 동작과 시뮬레이터 동작이 달라지면 trace가 틀려짐. 자세한 내용은 어펜딕스 참조.</p>
+  </section>
+
+  <!-- 02 -->
+  <section id="s-trace" class="block">
+    <h2>Trace-Driven 방식</h2>
+    <pre><code>실제 GPU (L40, V100 등)
+        │
+        │  NVBit (binary instrumentation)
+        ▼
+   SASS 명령어 스트림 기록 (traces/)
+        │
+        │  파일로 저장
+        ▼
+   GPGPU-Sim 4.x (소프트웨어 CPU 시뮬레이터)
+        │
+        │  trace를 읽어서 사이클 단위로 재생
+        ▼
+   성능 통계 (IPC, cache miss rate, memory BW, ...)</code></pre>
+
+    <h3>Accel-Sim의 장점</h3>
+    <ul>
+      <li>
+        <strong>기능 모델 불필요.</strong> trace에는 이미 실행 결과(레지스터 값, 메모리 접근 주소)가 들어 있으므로 시뮬레이터가 연산을 직접 수행할 필요 없음.
+      </li>
+      <li>
+        cuBLAS, cuDNN, PyTorch를 포함해 CUDA 바이너리로 실행 가능한 모든 것을 추적 가능. <strong>즉, 소스 코드 불필요.</strong>
+      </li>
+      <li>
+        <strong>재현성.</strong> trace를 한 번 찍어두면 HW 없이도 반복 시뮬레이션 가능. 파라미터를 바꿔가며 실험할 때 매우 유리.
+      </li>
+    </ul>
+  </section>
+
+  <!-- 03 -->
+  <section id="s-components" class="block">
+    <h2>Accel-Sim 4개의 구성요소</h2>
+    <p>Accel-Sim은 4개의 주요 컴포넌트로 구성.</p>
+
+    <h3>1. Accel-Sim Tracer</h3>
+    <ul>
+      <li>NVBit 기반의 binary instrumentation 도구.</li>
+      <li>실제 GPU에서 CUDA 바이너리를 실행하면서 SASS 명령어 스트림을 파일로 기록.</li>
+      <li>출력: <code>kernelslist.g</code> (커널 목록) + 각 커널별 trace 파일.</li>
+    </ul>
+
+    <h3>2. Accel-Sim SASS Frontend + Simulation Engine</h3>
+    <ul>
+      <li>GPGPU-Sim 4.0의 성능 모델 위에 <code>exec_</code>·<code>trace_</code> 접두사를 가진 새 클래스를 상속해 구현.</li>
+      <li>exec-driven 모드에서는 기능 모델에서, trace-driven 모드에서는 trace 파일에서 다음 명령어를 공급.</li>
+      <li><strong>GPGPU-Sim의 성능 모델(SM 구조, warp scheduler, 메모리 계층 등)은 그대로 유지하면서 "명령어 공급" 방식만 교체한 구조.</strong></li>
+    </ul>
+
+    <h3>3. Accel-Sim Correlator</h3>
+    <ul>
+      <li>성능 모델에서 나온 통계와 실제 HW 프로파일링 결과를 매칭·플롯·비교하는 도구.</li>
+    </ul>
+
+    <h3>4. Accel-Sim Tuner</h3>
+    <ul>
+      <li>마이크로벤치마크 스위트를 자동으로 실행해 GPGPU-Sim 설정 파일을 자동 생성하는 도구.</li>
+      <li>HW 스펙 헤더 파일을 제공하면 마이크로벤치마크를 돌려 캐시 크기, 레이턴시, BW 등을 측정하고 그 결과를 config 파일로 출력.</li>
+    </ul>
+  </section>
+
+  <!-- 04 -->
+  <section id="s-relation" class="block">
+    <h2>GPGPU-Sim 4.x와의 관계 — 헷갈리는 부분</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 1. GPGPU-Sim 3.x / 4.x / Accel-Sim Framework 비교</caption>
+        <thead>
+          <tr><th>항목</th><th>설명</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>GPGPU-Sim 3.x</td>
+            <td>기존 시뮬레이터. PTX 기반, execution-driven. UBC 그룹 유지보수.</td>
+          </tr>
+          <tr>
+            <td>GPGPU-Sim 4.x</td>
+            <td>Accel-Sim 논문과 함께 릴리즈. SASS trace-driven 지원 추가, 성능 모델 대폭 업데이트.</td>
+          </tr>
+          <tr>
+            <td>Accel-Sim Framework</td>
+            <td>GPGPU-Sim 4.x를 내부적으로 활용. 그 위에 Tracer / Frontend / Correlator / Tuner를 얹은 통합 프레임워크.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p><code>./gpu-simulator/setup_environment.sh</code> 실행 시 적합한 버전의 GPGPU-Sim 4.x가 자동으로 클론되고 Accel-Sim과 통합됨. GPGPU-Sim을 별도로 받을 필요 없음.</p>
+  </section>
+
+  <!-- 05 -->
+  <section id="s-arch" class="block">
+    <h2>지원 아키텍처</h2>
+    <ul>
+      <li>현재 ISA 정의 파일은 Kepler, Pascal, Turing, Volta 세대 대상.</li>
+      <li>공식적으로 검증된(tested) config는 주로 <strong>SM7_QV100 (Volta, V100)</strong> 기준.</li>
+      <li>config 파라미터(캐시 크기, BW 등) 튜닝은 별도 필요.</li>
+      <li>L40 기준으로 실험하려면 SM89 config를 직접 작성해야 함.</li>
+      <li>다른 아키텍처가 필요하면 config를 수정해서 만드는 방식.</li>
+    </ul>
+  </section>
+
+  <!-- 06 -->
+  <section id="s-accuracy" class="block block--callout block--key">
+    <h2><span class="tag">Key</span>정확도 및 신뢰도</h2>
+    <p>ISCA 2020 논문 기준, 제작자가 명시한 내용.</p>
+    <ul>
+      <li><strong>Cycle-accurate가 아님</strong> — RTL 시뮬레이터가 아니므로 클럭 단위 정확도 없음.</li>
+      <li><strong>Trend-accurate</strong> — IPC, cache hit rate, memory bandwidth utilization 같은 성능 트렌드는 잘 포착.</li>
+      <li><strong>검증된 workload 범위 내에서는</strong> 상당히 신뢰 가능한 수준.</li>
+      <li>직접 작성한 새 아키텍처 config는 튜닝 전까지 오차 큼.</li>
+    </ul>
+  </section>
+
+  <!-- 07 -->
+  <section id="s-compare" class="block">
+    <h2>다른 시뮬레이터와 비교</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 2. GPU 시뮬레이터 비교</caption>
+        <thead>
+          <tr><th>시뮬레이터</th><th>방식</th><th>대상</th><th>Accel-Sim과 차이</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>gem5 (GPU 확장)</td>
+            <td>Execution-driven</td>
+            <td>CPU+GPU</td>
+            <td>범용적이지만 GPU 모델링 정확도 낮음</td>
+          </tr>
+          <tr>
+            <td>Multi2Sim</td>
+            <td>Execution-driven</td>
+            <td>CPU+GPU</td>
+            <td>유지보수 중단</td>
+          </tr>
+          <tr>
+            <td>MGPUSim</td>
+            <td>Trace/Exec hybrid</td>
+            <td>AMD GCN</td>
+            <td>AMD 특화, NVIDIA 지원 없음</td>
+          </tr>
+          <tr>
+            <td>GPGPU-Sim 3.x</td>
+            <td>Execution-driven PTX</td>
+            <td>NVIDIA</td>
+            <td>Accel-Sim의 전신, SASS 미지원</td>
+          </tr>
+          <tr>
+            <td><strong>Accel-Sim</strong></td>
+            <td>Trace-driven SASS</td>
+            <td>NVIDIA</td>
+            <td><strong>현대 NVIDIA 아키텍처 검증에 가장 근접</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="s-limit" class="block block--callout block--open">
+    <h2><span class="tag">Open</span>한계</h2>
+    <ul>
+      <li><strong>실제 GPU가 tracing에 필요</strong> — trace 생성 단계는 실리콘 필수. 시뮬레이션 재생은 CPU만으로 가능.</li>
+      <li><strong>NVBit가 지원하는 아키텍처에 제한</strong> — sm_89까지는 현실적, Blackwell(sm_120)은 불확실.</li>
+      <li><strong>Closed-source 라이브러리의 주소 분석 어려움</strong> — trace 자체는 추출 가능하나 semantic 이해는 별도.</li>
+      <li><strong>Config 파일의 품질이 결과를 결정</strong> — 잘못 쓴 config는 완전히 다른 결론으로 이어짐.</li>
+      <li><strong>멀티 GPU 시뮬레이션은 아직 로드맵 단계.</strong></li>
+    </ul>
+  </section>
+
+  <!-- 09 -->
+  <section id="s-ref" class="block">
+    <h2>레퍼런스</h2>
+    <ul>
+      <li>메인 논문: <strong>Khairy et al., "Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling", ISCA 2020</strong></li>
+      <li>전력 모델: <strong>Kandiah et al., "AccelWattch: A Power Modeling Framework for Modern GPUs", MICRO 2021</strong></li>
+    </ul>
+  </section>
+
+  <!-- 10 -->
+  <section id="s-appendix" class="block">
+    <h2>어펜딕스 — Trace-driven이 문제가 되는 경우</h2>
+
+    <h3>Branch divergence 처리가 달라질 때</h3>
+    <p>warp 내에서 일부 thread가 다른 branch를 탔을 때, 시뮬레이터가 다른 재합류(reconvergence) 결정을 내리면 실제 실행 순서와 달라질 수 있음. trace는 이를 반영하지 못함.</p>
+
+    <h3>메모리 동작에 의존적인 제어 흐름이 있을 때</h3>
+    <p>Atomic 연산, 동기화 barrier 결과에 따라 다음 명령어가 달라지는 구조라면, trace가 특정 HW 동작을 전제로 찍혀 있어서 다른 마이크로아키텍처로 재생 시 의미가 달라질 수 있음.</p>
+
+    <h3>Spinlock, polling loop</h3>
+    <p>Accel-Sim README에도 spinlock handling 옵션이 별도로 있는 이유. 루프 반복 횟수가 HW 상태에 따라 달라지는데, trace는 특정 HW에서 실제로 돈 횟수만 기록.</p>
+
+    <blockquote>
+      <p><strong>한 줄 요약:</strong> trace-driven은 "명령어 공급"과 "마이크로아키텍처 결정"이 분리되어 있어서, 마이크로아키텍처가 명령어 흐름 자체에 영향을 미치는 상황에서는 부정확.</p>
+    </blockquote>
+  </section>
+
+
+    <footer class="doc-footer">
+    <span>Junon · 주간 연구 미팅 노트</span>
+    <span>2026.06.11</span>
+  </footer>
+
+</article>
+
+<!-- 수식 자동 렌더 (md에 수식이 없어도 그냥 둬도 무해) -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false}
+  ],throwOnError:false});"></script>
+</body>
+</html>

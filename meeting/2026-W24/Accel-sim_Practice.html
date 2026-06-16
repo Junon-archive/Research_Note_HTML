@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 연구 미팅 — 2026.06.11</title>
+
+<!-- Pretendard (한글 본문) + KaTeX (수식). 오프라인이면 시스템 폰트로 대체됨 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#1a1a1f;
+    --muted:#6b7280;
+    --faint:#9ca3af;
+    --hair:#e8e8ec;
+    --hair-strong:#d6d6db;
+    --accent:#2545a6;
+    --accent-soft:#eef1fb;
+    --key:#2545a6;   --key-bg:#eef1fb;
+    --next:#0f766e;  --next-bg:#eafaf6;
+    --open:#b45309;  --open-bg:#fff7ec;
+    --recap:#57606a; --recap-bg:#f5f6f8;
+    --code-bg:#f6f7f9;
+    --code-ink:#27303f;
+    --maxw:840px;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Menlo",Consolas,monospace;
+    --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,
+           "Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:#eceef1;
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.72;
+    letter-spacing:-0.003em;
+    word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .doc{
+    counter-reset:sec;
+    max-width:var(--maxw);
+    margin:40px auto;
+    background:var(--paper);
+    padding:64px 68px 72px;
+    border:1px solid var(--hair);
+    border-radius:4px;
+    box-shadow:0 1px 2px rgba(20,20,30,.04),0 12px 40px rgba(20,20,30,.06);
+  }
+
+  /* ---------- Header ---------- */
+  .doc-eyebrow{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  .doc-title{
+    font-size:30px;
+    font-weight:700;
+    line-height:1.25;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+  }
+  .doc-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 30px;
+    padding-bottom:22px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:6px;
+  }
+  .doc-meta div{font-size:13.5px;line-height:1.5;}
+  .doc-meta .k{color:var(--faint);font-weight:500;margin-right:7px;}
+  .doc-meta .v{color:var(--ink);font-weight:600;}
+
+  /* ---------- Table of contents ---------- */
+  .toc{
+    margin:26px 0 4px;
+    padding:18px 20px;
+    background:var(--recap-bg);
+    border:1px solid var(--hair);
+    border-radius:6px;
+  }
+  .toc h4{
+    margin:0 0 10px;font-size:11.5px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  }
+  .toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  .toc li{counter-increment:toc;font-size:14px;margin:0 0 7px;break-inside:avoid;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);
+    color:var(--accent);font-variant-numeric:tabular-nums;
+    font-weight:700;font-size:11.5px;margin-right:9px;}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;}
+  .toc a:hover{border-bottom-color:var(--accent);}
+
+  /* ---------- Sections ---------- */
+  section.block{
+    counter-increment:sec;
+    margin:38px 0 0;
+    scroll-margin-top:20px;
+  }
+  section.block > h2{
+    position:relative;
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:-0.015em;
+    line-height:1.35;
+    margin:0 0 16px;
+    padding-bottom:9px;
+    border-bottom:1px solid var(--hair-strong);
+  }
+  section.block > h2::before{
+    content:counter(sec,decimal-leading-zero);
+    display:inline-block;
+    min-width:1.9em;
+    margin-right:.55em;
+    color:var(--accent);
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  h3{font-size:16.5px;font-weight:700;margin:24px 0 9px;letter-spacing:-0.01em;}
+  h4{font-size:14.5px;font-weight:700;color:var(--muted);margin:18px 0 7px;}
+
+  p{margin:0 0 13px;}
+  a{color:var(--accent);}
+  strong{font-weight:700;}
+  mark{background:#fff2a8;padding:0 .15em;border-radius:2px;}
+
+  ul,ol{margin:0 0 14px;padding-left:1.35em;}
+  li{margin:0 0 6px;}
+  li::marker{color:var(--accent);}
+  ul ul,ol ol,ul ol,ol ul{margin:6px 0 6px;}
+
+  hr{border:0;border-top:1px solid var(--hair);margin:28px 0;}
+
+  /* ---------- Callout sections (semantic) ---------- */
+  .block--callout{
+    padding:20px 24px 6px;
+    border:1px solid var(--hair);
+    border-left:4px solid var(--recap);
+    border-radius:0 7px 7px 0;
+    background:var(--recap-bg);
+  }
+  .block--callout > h2{
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:12px;
+    font-size:18px;
+  }
+  .tag{
+    display:inline-block;
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px;border-radius:20px;margin-right:10px;vertical-align:2px;
+  }
+  .block--key   {border-left-color:var(--key);   background:var(--key-bg);}
+  .block--key  .tag{background:var(--key);color:#fff;}
+  .block--next  {border-left-color:var(--next);  background:var(--next-bg);}
+  .block--next .tag{background:var(--next);color:#fff;}
+  .block--open  {border-left-color:var(--open);  background:var(--open-bg);}
+  .block--open .tag{background:var(--open);color:#fff;}
+  .block--recap {border-left-color:var(--recap); background:var(--recap-bg);}
+  .block--recap .tag{background:var(--recap);color:#fff;}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{overflow-x:auto;margin:6px 0 18px;}
+  table.data{
+    width:100%;border-collapse:collapse;font-size:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  table.data thead th{
+    background:#f3f4f7;color:var(--ink);font-weight:700;text-align:left;
+    padding:9px 13px;border-bottom:2px solid var(--hair-strong);
+    white-space:nowrap;
+  }
+  table.data td{padding:9px 13px;border-bottom:1px solid var(--hair);vertical-align:top;}
+  table.data tbody tr:last-child td{border-bottom:1px solid var(--hair-strong);}
+  table.data td.num,table.data th.num{text-align:right;}
+  table.data tbody tr:hover{background:#fafafb;}
+  table.data caption{
+    caption-side:bottom;text-align:left;color:var(--muted);
+    font-size:12.5px;margin-top:8px;
+  }
+
+  /* ---------- Code ---------- */
+  code{
+    font-family:var(--mono);font-size:.88em;
+    background:var(--code-bg);color:#b3186d;
+    padding:.12em .38em;border-radius:4px;
+  }
+  pre{
+    margin:6px 0 18px;background:var(--code-bg);color:var(--code-ink);
+    border:1px solid var(--hair);border-radius:8px;
+    padding:15px 17px;overflow-x:auto;line-height:1.6;
+  }
+  pre code{background:none;color:inherit;padding:0;font-size:13px;}
+  .codecard{margin:6px 0 18px;}
+  .codecard .codecard__name{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    background:#eceef1;border:1px solid var(--hair);border-bottom:none;
+    padding:6px 14px;border-radius:8px 8px 0 0;
+  }
+  .codecard pre{margin:0;border-radius:0 0 8px 8px;}
+
+  kbd{
+    font-family:var(--mono);font-size:.8em;background:#fff;color:var(--ink);
+    border:1px solid var(--hair-strong);border-bottom-width:2px;border-radius:5px;
+    padding:1px 6px;
+  }
+
+  /* ---------- Figures / quotes ---------- */
+  figure{margin:14px 0 18px;text-align:center;}
+  figure img{max-width:100%;border:1px solid var(--hair);border-radius:6px;}
+  figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;}
+  blockquote{
+    margin:14px 0;padding:4px 18px;color:#3f4754;
+    border-left:3px solid var(--accent);background:var(--accent-soft);
+    border-radius:0 6px 6px 0;
+  }
+  blockquote p:last-child{margin-bottom:0;}
+
+  /* ---------- Footer ---------- */
+  .doc-footer{
+    margin-top:48px;padding-top:16px;border-top:1px solid var(--hair);
+    font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:680px){
+    .doc{padding:36px 22px 44px;margin:0;border-radius:0;border-left:none;border-right:none;}
+    body{font-size:15.5px;}
+    .doc-title{font-size:25px;}
+    .toc ol{columns:1;}
+    section.block > h2{font-size:19px;}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff;}
+    .doc{box-shadow:none;border:none;margin:0;max-width:none;padding:0 6mm;}
+    section.block{break-inside:avoid-page;}
+    .block--callout,table.data,pre,figure{break-inside:avoid;}
+    a{color:var(--ink);text-decoration:none;}
+    .toc{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<article class="doc">
+
+  <header class="doc-header">
+    <p class="doc-eyebrow">Weekly Research Meeting</p>
+    <h1 class="doc-title">NVBit → Accel-Sim End-to-End 파이프라인 &amp; SM89_L40 Config 작성</h1>
+    <div class="doc-meta">
+      <div><span class="k">작성자</span><span class="v">Junon</span></div>
+      <div><span class="k">지도교수</span><span class="v">○○○ 교수님</span></div>
+      <div><span class="k">주차</span><span class="v">2026-W24 (06.04–06.10)</span></div>
+      <div><span class="k">일자</span><span class="v">2026.06.11</span></div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <h4>목차</h4>
+    <ol>
+      <li><a href="#s-goal">이번 주 목표</a></li>
+      <li><a href="#s-env">실험 환경</a></li>
+      <li><a href="#s-stage1">단계 1 — NVBit 1.7.6 빌드</a></li>
+      <li><a href="#s-stage2">단계 2 — LLaMA3-8B Baseline</a></li>
+      <li><a href="#s-stage3">단계 3 — NVBit 전체 커널 덤프</a></li>
+      <li><a href="#s-stage4">단계 4 — FlashAttention 커널 Trace</a></li>
+      <li><a href="#s-stage5">단계 5 — A100 Config 첫 시뮬레이션</a></li>
+      <li><a href="#s-stage6">단계 6 — SM89_L40 Config 작성</a></li>
+      <li><a href="#s-stage7">단계 7 — SM89_L40 Config 시뮬레이션</a></li>
+      <li><a href="#s-pitfall">주요 함정</a></li>
+      <li><a href="#s-tree">디렉토리 구조 (최종)</a></li>
+      <li><a href="#s-summary">세션별 요약</a></li>
+      <li><a href="#s-key">핵심 결론</a></li>
+      <li><a href="#s-open">미확인 · 미검증 사항</a></li>
+      <li><a href="#s-next">향후 방향</a></li>
+    </ol>
+  </nav>
+
+  <!-- 01 -->
+  <section id="s-goal" class="block">
+    <h2>이번 주 목표</h2>
+    <ul>
+      <li>LLaMA3-8B inference의 GPU 실행 trace를 <strong>NVBit</strong>으로 수집</li>
+      <li>Accel-Sim(GPGPU-Sim 4.2.0) trace-driven 시뮬레이션으로 통과시키는 <strong>end-to-end 파이프라인</strong>을 완주해보기</li>
+      <li>trace를 수집한 하드웨어(L40, SM 8.9)에 맞는 <code>gpgpusim.config</code>를 작성해 <strong>아키텍처 정합성</strong> 확보</li>
+    </ul>
+  </section>
+
+  <!-- 02 -->
+  <section id="s-env" class="block">
+    <h2>실험 환경</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 1. 실행 환경 및 주요 버전</caption>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>클러스터</td><td>SLURM, GPU 노드 acas1 / acas2 (NVIDIA L40, SM 8.9 / Ada)</td></tr>
+          <tr><td>주의 노드</td><td>acas3 / acas4 (RTX Pro 6000, SM 12.0 Blackwell) — torch 2.3.1 미지원</td></tr>
+          <tr><td>conda env (trace)</td><td><code>moh</code> — Python 3.10, torch 2.3.1+cu121</td></tr>
+          <tr><td>conda env (sim)</td><td><code>accelsim</code> — CUDA 11.8, gcc 11.4</td></tr>
+          <tr><td>NVBit</td><td>1.7.6, 시스템 CUDA 12.4로 빌드 (CUDA 11.8로는 sm_89 빌드 불가)</td></tr>
+          <tr><td>Accel-Sim</td><td>framework <code>dev</code> branch, commit 3016c65 / GPGPU-Sim 4.2.0 build 6c3cf4ff</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="s-stage1" class="block">
+    <h2>단계 1 — NVBit 1.7.6 빌드</h2>
+    <h3>설치 및 빌드</h3>
+    <p>NVBit를 서버에 설치, 빌드 자체는 약 12초 만에 완료. <code>ARCH=sm_89</code> 타겟으로 <code>tracer_tool.so</code>(2.8MB)와 <code>post-traces-processing</code>(1.2MB) 빌드.</p>
+
+    <h3>함정 — CUDA 버전</h3>
+    <p>서버에는 CUDA 버전이 두 개 있는데, L40에서 NVBit을 사용하려면 반드시 <strong>버전 12.4</strong> 사용 필수. 기본으로 설정된 구버전(11.8)을 쓰면 설치 자체가 안 됨.</p>
+    <blockquote>
+      <p><code>setup_accelsim.sh</code>가 conda CUDA 11.8을 설정하므로, 이후 <code>module load cuda/12.4</code>로 override 필수. NVBit 1.7.6은 CUDA 11.8 nvcc로는 sm_89 빌드 불가 (sm_89는 CUDA ≥ 12.0 필요).</p>
+    </blockquote>
+
+    <h3>빌드 후 생성 파일</h3>
+    <ul>
+      <li><code>accel-sim-framework/util/tracer_nvbit/tracer_tool/tracer_tool.so</code> (2.8MB)</li>
+      <li><code>accel-sim-framework/util/tracer_nvbit/tracer_tool/traces-processing/post-traces-processing</code> (1.2MB)</li>
+    </ul>
+  </section>
+
+  <!-- 04 -->
+  <section id="s-stage2" class="block">
+    <h2>단계 2 — LLaMA3-8B Baseline</h2>
+    <p>NVBit 없이 모델이 정상 작동하는지 단독으로 확인하는 단계. LLaMA3-8B (Meta, fp16) single-token decode 실행.</p>
+    <ul>
+      <li>fp16 모델 로드</li>
+      <li>greedy decode (<code>max_new_tokens=1</code>)</li>
+      <li>사용 GPU 메모리: 16GB</li>
+    </ul>
+    <p><strong>결과:</strong> input <code>"Hello"</code> → output <code>","</code>, generate time 0.655s, GPU VRAM 16.06GB.</p>
+  </section>
+
+  <!-- 05 -->
+  <section id="s-stage3" class="block">
+    <h2>단계 3 — NVBit 전체 커널 덤프</h2>
+    <p>NVBit를 붙여 LLaMA3-8B 커널 확인, 총 <strong>1,430개</strong>의 커널 기록.</p>
+
+    <h3>실패한 시도</h3>
+    <ul>
+      <li><strong>Job 11204</strong> (<code>ACTIVE_FROM_START=1</code>): 모델 로드 시 JIT 컴파일 단계에서 NVBit이 Ada SM 8.9의 <code>CALL.REL.NOINC</code> 명령어를 처리하지 못해 경고 메시지가 초당 수만 줄씩 폭주 → inference 도달 불가.</li>
+      <li>외 다수.</li>
+    </ul>
+
+    <h3>해결책</h3>
+    <p><code>ACTIVE_FROM_START=0</code> + Python 코드에서 warm-up forward를 1회 실행(JIT 완료)한 뒤 <code>cudaProfilerStart()</code> 호출. <code>--nodelist=acas1</code>로 노드 강제 지정.</p>
+
+    <h3>결과</h3>
+    <ul>
+      <li>소요: 약 42분, 노드: acas1</li>
+      <li>총 1,430개 커널 trace (ctx_0x71aa850)</li>
+      <li>파일: <code>kernel-1400-ctx_0x71aa850.trace.xz</code> ~ <code>kernel-2501-ctx_0x71aa850.trace.xz</code></li>
+      <li>FlashAttention 커널 위치 확인: <code>pytorch_flash::flash_fwd_kernel</code>, ID 1450, 1493, …, 2783 (간격 43, 총 32개)</li>
+    </ul>
+  </section>
+
+  <!-- 06 -->
+  <section id="s-stage4" class="block">
+    <h2>단계 4 — FlashAttention 커널 Trace</h2>
+    <p>FlashAttention 커널만 골라내는 작업. 총 32개가 선택되어 각각 약 140KB 파일로 저장됨.</p>
+
+    <h3>설계 오류</h3>
+    <ul>
+      <li><code>DYNAMIC_KERNEL_RANGE="1450-2783@.*pytorch_flash.*flash_fwd_kernel.*"</code> 지정.</li>
+      <li>그러나 <code>ACTIVE_FROM_START=0</code> 모드에서 NVBit의 내부 카운터(<code>ctx_kernelid</code>)는 <code>cudaProfilerStart()</code> 이후 <strong>1부터 재시작</strong>.</li>
+      <li>단계 3의 ID(1450~2783)는 전체 프로세스 기준이므로 profiler 창 안에서는 무효 → 범위 필터가 무시되고 1,430개 전체가 trace됨 (약 80분).</li>
+    </ul>
+
+    <h3>사후 처리</h3>
+    <ul>
+      <li>1,430개 중 <code>flash_fwd_kernel</code>에 해당하는 32개를 단계 3 kernelslist와 대조해 선별</li>
+      <li><code>traces/llama3_flash_attn/</code>에 symlink 생성</li>
+      <li><code>post-traces-processing</code> 실행</li>
+      <li><code>.traceg.xz</code> 32개 생성</li>
+    </ul>
+
+    <h3>출력</h3>
+    <ul>
+      <li><code>kernel-{1450,1493,…,2783}-ctx_0x65ab690.traceg.xz</code> 32개 (각 138~140KB)</li>
+      <li><code>kernelslist.g</code> (1.2KB)</li>
+    </ul>
+
+    <blockquote>
+      <p><strong>주의:</strong> 단계 3(ctx_0x71aa850)과 단계 4(ctx_0x65ab690)는 CUDA context 주소가 다름 (별도 잡 실행). 커널 순서의 결정성(determinism)은 검증하지 않음.</p>
+    </blockquote>
+  </section>
+
+  <!-- 07 -->
+  <section id="s-stage5" class="block">
+    <h2>단계 5 — A100 Config 첫 시뮬레이션</h2>
+    <p>L40 config가 아직 없어서 우선 A100 config로 진행. FlashAttention 32개 커널 trace를 Accel-Sim에서 구동.</p>
+    <ul>
+      <li><strong>파티션:</strong> cpu · <strong>노드:</strong> acas3 · <strong>소요:</strong> 120초</li>
+      <li><strong>Config:</strong> <code>SM80_A100/gpgpusim.config</code> — Ada SM 8.9 trace를 Ampere A100 config로 시뮬 (의도적 불일치, 파이프라인 완주 확인 목적)</li>
+    </ul>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 2. SM80_A100 config 시뮬레이션 결과</caption>
+        <thead><tr><th>지표</th><th class="num">값</th></tr></thead>
+        <tbody>
+          <tr><td><code>gpu_tot_sim_cycle</code></td><td class="num">296,936</td></tr>
+          <tr><td><code>gpu_tot_ipc</code></td><td class="num">467.6708</td></tr>
+          <tr><td><code>gpu_sim_insn</code></td><td class="num">4,337,106</td></tr>
+          <tr><td><code>gpu_tot_issued_cta</code></td><td class="num">1,024</td></tr>
+          <tr><td>L1D miss rate</td><td class="num">1.0000</td></tr>
+          <tr><td>L2 miss rate</td><td class="num">0.1599</td></tr>
+          <tr><td>시뮬 실행 시간</td><td class="num">120초</td></tr>
+          <tr><td>silicon slowdown</td><td class="num">569,927×</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="s-stage6" class="block">
+    <h2>단계 6 — SM89_L40 gpgpusim.config 작성</h2>
+    <p>시뮬레이터 config를 L40 하드웨어 스펙에 맞게 수정. SM 수(46 vs 142), L2 크기(4MB vs 48MB), 메모리 채널(16 vs 12), 클럭 등 주요 파라미터 불일치. → L40 공개 스펙을 기반으로 <code>SM86_RTX3070</code>을 베이스 삼아 <code>SM89_L40</code> config를 직접 작성.</p>
+    <ul>
+      <li><strong>베이스:</strong> <code>configs/tested-cfgs/SM86_RTX3070/gpgpusim.config</code></li>
+      <li><strong>생성:</strong> <code>configs/tested-cfgs/SM89_L40/gpgpusim.config</code> + <code>trace.config</code></li>
+    </ul>
+
+    <h3>수정 항목 요약</h3>
+    <ul>
+      <li>GPU 세대 번호: 86 → 89 (L40은 Compute Capability 8.9)</li>
+      <li>SM: 46개 → 142개</li>
+      <li>메모리 채널 수: 16개 → 12개</li>
+      <li>2차 캐시 크기: 4MB → 48MB</li>
+      <li>클럭 속도: 1132MHz → 1110MHz</li>
+    </ul>
+
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 3. SM86_RTX3070 → SM89_L40 파라미터 변경 내역</caption>
+        <thead><tr><th>파라미터</th><th>SM86 원래값</th><th>SM89_L40 수정값</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td><code>ptx_force_max_capability</code></td><td>86</td><td>89</td><td>Ada Lovelace sm_89</td></tr>
+          <tr><td><code>compute_capability_minor</code></td><td>6</td><td>9</td><td>Ada Lovelace sm_89</td></tr>
+          <tr><td><code>occupancy_sm_number</code></td><td>86</td><td>89</td><td>Ada Lovelace sm_89</td></tr>
+          <tr><td><code>coalesce_arch</code></td><td>86</td><td>89</td><td>Ada Lovelace sm_89</td></tr>
+          <tr><td><code>n_clusters</code></td><td>46</td><td>142</td><td>L40: 142 SM</td></tr>
+          <tr><td><code>n_mem</code></td><td>16</td><td>12</td><td>L40: 384-bit bus / 32 = 12채널</td></tr>
+          <tr><td><code>cache:dl2</code> sets</td><td>64</td><td>1024</td><td>L40: 48MB L2 / 24파티션 = 2MB/파티션 → 1024 sets</td></tr>
+          <tr><td><code>clock_domains</code></td><td>1132:1132:1132:3500.5</td><td>1110:1110:1110:2000</td><td>L40 base 1110MHz / GDDR6 16Gbps</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>수정하지 않은 항목</h4>
+    <p>L1D 128KB per SM (sm_86과 동일), 파이프라인 구조, DRAM 타이밍 — 1차 근사 수준으로 그대로 둠.</p>
+  </section>
+
+  <!-- 09 -->
+  <section id="s-stage7" class="block">
+    <h2>단계 7 — SM89_L40 Config 시뮬레이션</h2>
+    <ul>
+      <li><strong>파티션:</strong> cpu · <strong>노드:</strong> acas1 · <strong>소요:</strong> 103초</li>
+      <li><strong>Config:</strong> <code>SM89_L40/gpgpusim.config</code> (수정한 config)</li>
+      <li><strong>결과 저장:</strong> <code>sim_run/llama3_flash_attn_SM89/sim_output.txt</code></li>
+    </ul>
+
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 4. A100 config vs L40 config 결과 비교</caption>
+        <thead><tr><th>지표</th><th class="num">SM80_A100 (단계 5)</th><th class="num">SM89_L40 (단계 7)</th><th>변화</th></tr></thead>
+        <tbody>
+          <tr><td><code>gpu_tot_sim_cycle</code></td><td class="num">296,936</td><td class="num">298,855</td><td>+0.6%</td></tr>
+          <tr><td><code>gpu_tot_ipc</code></td><td class="num">467.67</td><td class="num">464.64</td><td>−0.6%</td></tr>
+          <tr><td>L1D miss rate</td><td class="num">1.0000</td><td class="num">1.0000</td><td>변화 없음</td></tr>
+          <tr><td>L2 miss rate</td><td class="num">0.1599</td><td class="num">0.1599</td><td>변화 없음</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>해석</h3>
+    <ul>
+      <li><strong>IPC·사이클 차이 1% 미만:</strong> SM 수(46→142), L2 크기, 클럭을 L40에 맞게 수정했으나 워크로드가 작아(grid 1×1×32, 32 CTAs) SM 활용률 차이가 크지 않음.</li>
+      <li><strong>L1D miss = 1.0000 유지:</strong> config 불일치가 원인이 아님. FlashAttention은 공유 메모리(SRAM) 중심의 타일 연산 알고리즘으로, global memory 접근이 L1D를 거치지 않고 직접 L2/DRAM으로 가도록 설계되어 있어 그런 것으로 파악됨. 이는 알고리즘 고유 특성.</li>
+    </ul>
+  </section>
+
+  <!-- 10 -->
+  <section id="s-pitfall" class="block">
+    <h2>주요 함정</h2>
+    <ol>
+      <li><strong><code>CALL.REL.NOINC</code>:</strong> Ada SM 8.9 이상의 신규 분기 명령어. NVBit 1.7.x가 미처리 → 경고 폭주. <code>ACTIVE_FROM_START=0</code> + warm-up으로 회피.</li>
+      <li><strong><code>ctx_kernelid</code> 재시작:</strong> <code>ACTIVE_FROM_START=0</code> 시 <code>cudaProfilerStart()</code> 이후 ID 카운터가 1부터 재시작. <code>DYNAMIC_KERNEL_RANGE</code>의 ID 범위 지정이 무효가 되고, 이름 regex만 유효함.</li>
+      <li><strong>IPOLY 해싱 제약:</strong> GPGPU-Sim의 IPOLY hash function은 파티션 수 16/32/64만 지원. L40의 24파티션(12채널×2)은 미지원 → <code>memory_partition_indexing 0</code>으로 우회.</li>
+    </ol>
+  </section>
+
+  <!-- 11 -->
+  <section id="s-tree" class="block">
+    <h2>디렉토리 구조 (최종)</h2>
+    <div class="codecard">
+      <div class="codecard__name">/home/wnsgjs34/Accel-sim/</div>
+      <pre><code>/home/wnsgjs34/Accel-sim/
+├── accel-sim-framework/
+│   ├── gpu-simulator/
+│   │   ├── bin/release/accel-sim.out
+│   │   └── gpgpu-sim/configs/tested-cfgs/
+│   │       ├── SM80_A100/gpgpusim.config
+│   │       ├── SM86_RTX3070/gpgpusim.config       (베이스로 사용)
+│   │       └── SM89_L40/                           (이번 세션 생성)
+│   │           ├── gpgpusim.config
+│   │           └── trace.config
+│   └── util/tracer_nvbit/tracer_tool/
+│       ├── tracer_tool.so
+│       └── traces-processing/post-traces-processing
+├── traces/
+│   ├── kernel-{1400..2501}-ctx_0x71aa850.trace.xz  (1,430개, Job 11253)
+│   ├── kernel-{1400..2829}-ctx_0x65ab690.trace.xz  (1,430개, Job 11288)
+│   ├── llama3_flash_attn/                           (flash 32개, A100 시뮬용)
+│   │   ├── kernel-{1450,...,2783}-ctx_0x65ab690.traceg.xz
+│   │   └── kernelslist.g
+│   └── retrace_20260611_001424/flash_only/          (flash 32개, SM89 시뮬용)
+│       ├── kernel-{1450,...,2783}-ctx_0x74eb430.traceg.xz
+│       └── kernelslist.g
+├── sim_run/
+│   ├── llama3_flash_attn_A100/sim_output.txt        (SM80 결과)
+│   └── llama3_flash_attn_SM89/sim_output.txt        (SM89 결과, 이번 세션)
+└── docs/
+    ├── SM89_L40_config_changes.md                   (이번 세션 생성)
+    ├── progress-report-nvbit-e2e_for_junon.md
+    └── progress-report-nvbit-e2e.md</code></pre>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section id="s-summary" class="block">
+    <h2>세션별 요약</h2>
+
+    <h3>세션 1 — End-to-end 파이프라인 완주 (단계 1~5)</h3>
+    <p><strong>수행:</strong> LLaMA3-8B (Meta, fp16) single-token decode에서 <code>pytorch_flash::flash_fwd_kernel</code> 커널 32개를 NVBit 1.7.6으로 trace하고, Accel-Sim 4.2.0 trace-driven 시뮬레이션 파이프라인을 end-to-end로 통과.</p>
+    <p><strong>의미:</strong> 실제 하드웨어(L40 Ada SM 8.9) trace를 가상 하드웨어(A100 Ampere SM 8.0) config로 시뮬레이션하는 파이프라인이 정상 작동함을 검증.</p>
+
+    <h3>세션 2 (2026-06-11) — SM89_L40 config 작성 및 재시뮬레이션 (단계 6~7)</h3>
+    <p><strong>수행:</strong> L40 공개 스펙을 기반으로 <code>SM86_RTX3070</code> 베이스에서 <code>SM89_L40</code> gpgpusim.config를 작성하고, 동일 trace(flash_fwd_kernel 32개)를 재시뮬레이션해 세션 1 결과와 비교.</p>
+    <p><strong>수정 파라미터:</strong> compute capability, SM 수(46→142), 메모리 채널(16→12), L2 크기(4MB→48MB), 클럭(1132→1110MHz / 3500→2000MHz).</p>
+    <p><strong>결과 요약:</strong> IPC 차이 0.6%, 사이클 차이 0.6%로 사실상 동일. L1D miss = 1.0000 유지.</p>
+  </section>
+
+  <!-- 13 -->
+  <section id="s-key" class="block block--callout block--key">
+    <h2><span class="tag">Key</span>핵심 결론</h2>
+    <ul>
+      <li>실제 하드웨어(L40 Ada SM 8.9) trace를 가상 하드웨어 config로 돌리는 <strong>NVBit → Accel-Sim end-to-end 파이프라인이 정상 작동</strong>함을 검증.</li>
+      <li><strong>L1D miss = 1.0000</strong>은 config 불일치가 원인이 아니라, FlashAttention의 tiled SRAM 알고리즘이 global memory 접근 시 L1D를 bypass하도록 동작하는 <strong>알고리즘 고유 특성</strong>으로 판단됨. (<code>-gpgpu_gmem_skip_L1D 0</code> 설정에도 불구하고 공유 메모리를 통한 데이터 재사용이 지배적)</li>
+    </ul>
+  </section>
+
+  <!-- 14 -->
+  <section id="s-open" class="block block--callout block--open">
+    <h2><span class="tag">Open</span>미확인 · 미검증 사항</h2>
+    <ul>
+      <li><strong>L1D miss = 1.0000 정밀 검증:</strong> 알고리즘 특성으로 추정했으나, 확정하려면 non-FlashAttention 커널(layernorm, embedding 등)과의 L1D miss rate 비교 필요.</li>
+      <li><strong>Instruction semantics 매핑 정확도:</strong> Ada SM 8.9 trace를 SM 8.0 config로 돌렸을 때 GPGPU-Sim이 ISA를 올바르게 매핑하는지 미확인.</li>
+      <li><strong>커널 순서 결정성:</strong> 단계 3(ctx_0x71aa850)과 단계 4(ctx_0x65ab690)의 커널 launch 순서가 동일한지 미검증.</li>
+      <li><strong>SM89_L40 config 한계:</strong> 공식 GPGPU-Sim 검증(RTL 비교) 미수행으로 1차 근사 수준. DRAM 타이밍(GDDR6X→GDDR6 차이)과 파이프라인 세부 구조는 미수정.</li>
+    </ul>
+  </section>
+
+  <!-- 15 -->
+  <section id="s-next" class="block block--callout block--next">
+    <h2><span class="tag">Next</span>향후 방향</h2>
+    <ul>
+      <li>다른 커널 유형(embedding lookup, layernorm, matmul)에 동일 파이프라인을 적용.</li>
+      <li>MoH head-wise offloading 시뮬레이션을 위한 baseline 확보 완료 → 이를 토대로 다음 단계 진행.</li>
+    </ul>
+  </section>
+
+  <footer class="doc-footer">
+    <span>Junon · 주간 연구 미팅 노트</span>
+    <span>2026.06.11</span>
+  </footer>
+
+</article>
+
+<!-- 수식 자동 렌더 (md에 수식이 없어도 그냥 둬도 무해) -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false}
+  ],throwOnError:false});"></script>
+</body>
+</html>
