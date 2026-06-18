@@ -4,35 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Junon · Research Notes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css">
   <style>
     :root {
-      --bg: #f8f8f7;
-      --paper: #ffffff;
-      --ink: #1c1c1e;
-      --muted: #6b6b6b;
-      --faint: #a0a0a0;
-      --rule: #e0e0de;
-      --accent: #2b4acb;
-      --maxw: 720px;
-      --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-      --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-      --mono: "SFMono-Regular", ui-monospace, "Menlo", Consolas, monospace;
+      --paper:#ffffff; --ink:#1a1a1f; --muted:#6b7280; --faint:#9ca3af;
+      --hair:#e8e8ec; --hair-strong:#d6d6db;
+      --accent:#2545a6; --accent-soft:#eef1fb;
+      --next:#0f766e;  --next-bg:#eafaf6;
+      --recap:#57606a; --recap-bg:#f5f6f8;
+      --maxw:900px;
+      --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;
     }
 
-    *, *::before, *::after { box-sizing: border-box; }
-
-    html { font-size: 18px; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      background: var(--bg);
+      background: var(--paper);
       color: var(--ink);
-      font-family: var(--serif);
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
+      font-family: var(--sans);
+      line-height: 1.65;
+      letter-spacing: 0;
     }
 
     a {
@@ -41,260 +36,288 @@
     }
 
     .page {
-      width: min(100% - 40px, var(--maxw));
+      width: min(100% - 32px, var(--maxw));
       margin: 0 auto;
-      padding: 80px 0 64px;
+      padding: 56px 0 40px;
     }
 
-    /* ── Header ── */
     .site-header {
-      padding-bottom: 40px;
-      border-bottom: 1px solid var(--rule);
+      padding-bottom: 34px;
+      border-bottom: 1px solid var(--hair);
     }
 
-    .site-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: .12em;
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
       text-transform: uppercase;
-      color: var(--faint);
-      margin: 0 0 20px;
     }
 
     h1 {
-      margin: 0 0 14px;
-      font-family: var(--serif);
-      font-size: clamp(28px, 5vw, 38px);
-      font-weight: 700;
-      line-height: 1.15;
-      letter-spacing: -.02em;
-    }
-
-    .site-desc {
       margin: 0;
-      font-size: 17px;
+      font-size: clamp(34px, 6vw, 54px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
       color: var(--muted);
-      font-style: italic;
-      line-height: 1.6;
+      font-size: 17px;
     }
 
-    /* ── Sections ── */
-    .section-group {
+    main {
       display: grid;
-      gap: 0;
-      padding: 40px 0 0;
+      gap: 42px;
+      padding: 42px 0;
     }
 
-    .section-block {
-      padding: 36px 0;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    .section-block:last-child {
-      border-bottom: none;
-    }
-
-    .section-meta {
+    .section-head {
       display: flex;
-      align-items: baseline;
+      align-items: end;
+      justify-content: space-between;
       gap: 16px;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
 
     h2 {
       margin: 0;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .count {
       color: var(--faint);
+      font-size: 14px;
+      white-space: nowrap;
     }
 
-    .section-count {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--faint);
+    .week-group,
+    .paper-grid {
+      display: grid;
+      gap: 14px;
     }
 
-    .section-title-link {
-      display: block;
-      margin-bottom: 6px;
+    .week {
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--paper);
     }
 
-    .section-title-link h3 {
+    .week-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--hair);
+      background: var(--recap-bg);
+    }
+
+    .week-title h3,
+    .paper-card h3 {
       margin: 0;
-      font-family: var(--serif);
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: -.01em;
-      color: var(--ink);
-      transition: color 120ms ease;
+      font-size: 17px;
+      line-height: 1.35;
+      letter-spacing: 0;
     }
 
-    .section-title-link:hover h3 {
-      color: var(--accent);
-    }
-
-    .section-body {
-      font-size: 16px;
+    .week-title span {
       color: var(--muted);
-      margin: 0 0 20px;
-      line-height: 1.65;
+      font-size: 14px;
+      white-space: nowrap;
     }
 
-    /* ── Entry list ── */
-    .entry-list {
-      list-style: none;
+    .note-list {
+      display: grid;
       margin: 0;
       padding: 0;
+      list-style: none;
     }
 
-    .entry-list li {
+    .note-link {
       display: flex;
-      align-items: baseline;
+      justify-content: space-between;
       gap: 16px;
-      padding: 7px 0;
-      border-top: 1px solid var(--rule);
+      padding: 15px 18px;
+      border-top: 1px solid var(--hair);
+      transition: background-color 150ms ease, color 150ms ease;
     }
 
-    .entry-list li:first-child {
-      border-top: none;
-      padding-top: 4px;
+    .note-list li:first-child .note-link {
+      border-top: 0;
     }
 
-    .entry-date {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--faint);
-      white-space: nowrap;
-      flex-shrink: 0;
-      padding-top: 1px;
-    }
-
-    .entry-link {
-      font-size: 15.5px;
-      color: var(--ink);
-      transition: color 120ms ease;
-    }
-
-    .entry-link:hover {
+    .note-link:hover,
+    .paper-card:hover {
+      background: var(--accent-soft);
       color: var(--accent);
     }
 
-    .see-all {
-      display: inline-block;
-      margin-top: 14px;
-      font-family: var(--sans);
+    .note-title {
+      font-weight: 650;
+    }
+
+    .note-path,
+    .paper-path {
+      color: var(--faint);
       font-size: 13px;
-      font-weight: 500;
-      color: var(--accent);
+      text-align: right;
+      overflow-wrap: anywhere;
     }
 
-    .see-all:hover {
-      text-decoration: underline;
+    .paper-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .see-all::after {
-      content: " →";
+    .paper-card {
+      display: grid;
+      gap: 10px;
+      min-height: 138px;
+      padding: 18px;
+      border: 1px solid var(--hair);
+      border-radius: 8px;
+      background: var(--paper);
+      transition: background-color 150ms ease, color 150ms ease;
     }
 
-    /* ── About ── */
-    .about {
-      padding-top: 40px;
-      border-top: 1px solid var(--rule);
+    .paper-meta {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--next-bg);
+      color: var(--next);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 22px;
+      border-top: 1px solid var(--hair);
+      color: var(--muted);
       font-size: 14px;
-      color: var(--faint);
-      font-family: var(--sans);
     }
 
-    .about p { margin: 0; }
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 24px, var(--maxw));
+        padding-top: 38px;
+      }
 
-    /* ── Responsive ── */
-    @media (max-width: 640px) {
-      .page { padding: 48px 0 40px; }
-      .entry-list li { flex-direction: column; gap: 2px; }
-    }
+      .section-head,
+      .site-footer,
+      .note-link {
+        align-items: start;
+        flex-direction: column;
+      }
 
-    @media print {
-      body { background: #fff; }
-      .page { padding: 0; }
+      .week-title {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .paper-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .note-path {
+        text-align: left;
+      }
     }
   </style>
 </head>
 <body>
   <div class="page">
-
     <header class="site-header">
-      <p class="site-label">Research Notes · Junon</p>
-      <h1>GPU Architecture<br>Research Documentation</h1>
-      <p class="site-desc">주간 미팅 자료와 논문 리뷰를 기록하는 아카이브. GPU 시뮬레이션, 메모리 시스템, MoE 추론 최적화를 중심으로 다룹니다.</p>
+      <p class="eyebrow">Research Note Hub</p>
+      <h1>Junon · Research Notes</h1>
+      <p class="subtitle">주간 미팅 자료 및 논문 리뷰 아카이브</p>
     </header>
 
-    <div class="section-group">
-
-      <!-- Meeting Notes -->
-      <div class="section-block">
-        <div class="section-meta">
-          <h2>Meeting Notes</h2>
-          <span class="section-count">3 documents</span>
+    <main>
+      <section aria-labelledby="meeting-title">
+        <div class="section-head">
+          <h2 id="meeting-title">Meeting</h2>
+          <span class="count">3 notes · <a href="meeting/" style="color:var(--accent)">전체 보기</a></span>
         </div>
 
-        <a class="section-title-link" href="meeting/index.html">
-          <h3>Weekly Meeting Notes</h3>
-        </a>
-        <p class="section-body">지도교수와의 주간 미팅에서 다룬 논문 이해, 실습 기록, 연구 방향 논의를 주차별로 정리합니다.</p>
+        <div class="week-group">
+          <article class="week">
+            <div class="week-title">
+              <h3>2026-W25</h3>
+              <span>1 file</span>
+            </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="meeting/2026-w25/accel-sim-weekly-meeting.html">
+                  <span class="note-title">Accel-Sim 논문 정리 — 내 연구에의 적용</span>
+                  <span class="note-path">meeting/2026-w25/accel-sim-weekly-meeting.html</span>
+                </a>
+              </li>
+            </ul>
+          </article>
+          <article class="week">
+            <div class="week-title">
+              <h3>2026-W24</h3>
+              <span>2 files</span>
+            </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="meeting/2026-W24/Accel-sim_Framework.html">
+                  <span class="note-title">Accel-sim Framework</span>
+                  <span class="note-path">meeting/2026-W24/Accel-sim_Framework.html</span>
+                </a>
+              </li>
+              <li>
+                <a class="note-link" href="meeting/2026-W24/Accel-sim_Practice.html">
+                  <span class="note-title">Accel-sim Practice</span>
+                  <span class="note-path">meeting/2026-W24/Accel-sim_Practice.html</span>
+                </a>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
 
-        <ul class="entry-list">
-          <li>
-            <span class="entry-date">2026-W25</span>
-            <a class="entry-link" href="meeting/2026-w25/accel-sim-weekly-meeting.html">Accel-Sim 논문 정리 — 내 연구에의 적용</a>
-          </li>
-          <li>
-            <span class="entry-date">2026-W24</span>
-            <a class="entry-link" href="meeting/2026-W24/Accel-sim_Practice.html">NVBit → Accel-Sim End-to-End 파이프라인 &amp; SM89_L40 Config 작성</a>
-          </li>
-          <li>
-            <span class="entry-date">2026-W24</span>
-            <a class="entry-link" href="meeting/2026-W24/Accel-sim_Framework.html">Accel-Sim 프레임워크 이해</a>
-          </li>
-        </ul>
-
-        <a class="see-all" href="meeting/index.html">전체 미팅 노트 보기</a>
-      </div>
-
-      <!-- Paper Reviews -->
-      <div class="section-block">
-        <div class="section-meta">
-          <h2>Paper Reviews</h2>
-          <span class="section-count">Sprint 1 · 2 papers</span>
+      <section aria-labelledby="papers-title">
+        <div class="section-head">
+          <h2 id="papers-title">Papers</h2>
+          <span class="count">3 sprints</span>
         </div>
 
-        <a class="section-title-link" href="papers/index.html">
-          <h3>Paper Reviews</h3>
-        </a>
-        <p class="section-body">스프린트 단위로 읽은 논문들의 분석 노트. 핵심 기여, 내 연구에의 적용, 용어 정리를 포함합니다.</p>
+        <div class="paper-grid">
+          <a class="paper-card" href="papers/Sprint1_Accel-sim/index.html">
+            <span class="paper-meta">Sprint 1</span>
+            <h3>Accel-sim</h3>
+            <span class="paper-path">papers/Sprint1_Accel-sim/</span>
+          </a>
+          <a class="paper-card" href="papers/Sprint2_MoH/index.html">
+            <span class="paper-meta">Sprint 2</span>
+            <h3>MoH</h3>
+            <span class="paper-path">papers/Sprint2_MoH/</span>
+          </a>
+          <a class="paper-card" href="papers/Sprint3_HVRP/index.html">
+            <span class="paper-meta">Sprint 3</span>
+            <h3>HVRP</h3>
+            <span class="paper-path">papers/Sprint3_HVRP/</span>
+          </a>
+        </div>
+      </section>
+    </main>
 
-        <ul class="entry-list">
-          <li>
-            <span class="entry-date">Sprint 1</span>
-            <a class="entry-link" href="papers/Sprint1_Accel-sim/01_Accel-sim/accel-sim-Selfmade.html">Accel-Sim 논문 정리 — 내 연구에의 적용</a>
-          </li>
-          <li>
-            <span class="entry-date">Sprint 1</span>
-            <a class="entry-link" href="papers/Sprint1_Accel-sim/01_Accel-sim/Accel-Sim-by Claude.html">Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling</a>
-          </li>
-        </ul>
-
-        <a class="see-all" href="papers/index.html">전체 논문 리뷰 보기</a>
-      </div>
-
-    </div>
-
-    <footer class="about">
-      <p>Author: Junon &nbsp;·&nbsp; Advisor: 홍정규 교수님 &nbsp;·&nbsp; Last updated <span style="font-family:var(--mono)">2026-06-18</span></p>
+    <footer class="site-footer">
+      <span>Junon · Research Note Hub</span>
+      <span>Last updated 2026-06-18</span>
     </footer>
-
   </div>
 </body>
 </html>
