@@ -27,36 +27,44 @@
     .eyebrow { margin:0 0 8px; color:var(--accent); font-size:13px; font-weight:700; text-transform:uppercase; }
     h1 { margin:0; font-size:clamp(26px,5vw,42px); line-height:1.1; font-weight:800; }
     .subtitle { margin:14px 0 0; color:var(--muted); font-size:17px; }
-    main { padding:42px 0; }
+    main { padding:42px 0; display:grid; gap:28px; }
     .section-head { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:16px; }
     h2 { margin:0; font-size:20px; font-weight:700; }
     .count { color:var(--faint); font-size:14px; }
-    .paper-list { display:grid; gap:12px; }
-    .paper-item {
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
-      padding:18px 20px; border:1px solid var(--hair); border-radius:8px;
-      background:var(--paper); transition:background-color 150ms ease, color 150ms ease;
+
+    /* 논문 그룹 (번호 + 제목 헤더 + 하위 노트 목록) */
+    .paper-group { display:grid; gap:12px; }
+    .paper-block { border:1px solid var(--hair); border-radius:8px; overflow:hidden; }
+    .paper-block-head {
+      display:flex; align-items:center; gap:14px;
+      padding:16px 20px; background:var(--recap-bg);
+      border-bottom:1px solid var(--hair);
     }
-    .paper-item:hover { background:var(--accent-soft); color:var(--accent); }
-    .paper-item-left { display:flex; align-items:center; gap:14px; }
     .paper-num {
       display:flex; align-items:center; justify-content:center;
       width:32px; height:32px; border-radius:50%;
-      background:var(--recap-bg); color:var(--muted);
-      font-size:13px; font-weight:700; flex-shrink:0;
+      background:#fff; border:1px solid var(--hair);
+      color:var(--accent); font-size:13px; font-weight:700; flex-shrink:0;
     }
-    .paper-item:hover .paper-num { background:var(--accent); color:#fff; }
-    .paper-item h3 { margin:0; font-size:16px; font-weight:650; line-height:1.35; }
-    .paper-item .note-tag {
+    .paper-block-head h3 { margin:0; font-size:16px; font-weight:700; line-height:1.35; color:var(--ink); }
+    .note-list { display:grid; margin:0; padding:0; list-style:none; }
+    .note-link {
+      display:flex; justify-content:space-between; align-items:center; gap:16px;
+      padding:13px 20px; border-top:1px solid var(--hair);
+      transition:background-color 150ms ease, color 150ms ease;
+    }
+    .note-list li:first-child .note-link { border-top:0; }
+    .note-link:hover { background:var(--accent-soft); color:var(--accent); }
+    .note-title { font-weight:600; font-size:14.5px; }
+    .note-badge {
       display:inline-flex; align-items:center; padding:2px 8px;
       border-radius:999px; background:var(--next-bg); color:var(--next);
-      font-size:11px; font-weight:700; margin-top:4px;
+      font-size:11px; font-weight:700; white-space:nowrap; flex-shrink:0;
     }
-    .paper-item .arrow { color:var(--faint); font-size:20px; flex-shrink:0; }
-    .paper-item:hover .arrow { color:var(--accent); }
-    .site-footer { display:flex; justify-content:space-between; gap:16px; padding-top:22px; border-top:1px solid var(--hair); color:var(--muted); font-size:14px; margin-top:40px; }
+
+    .site-footer { display:flex; justify-content:space-between; gap:16px; padding-top:22px; border-top:1px solid var(--hair); color:var(--muted); font-size:14px; margin-top:12px; }
     @media (max-width:600px) {
-      .paper-item { flex-direction:column; align-items:flex-start; }
+      .note-link { flex-direction:column; align-items:flex-start; }
     }
   </style>
 </head>
@@ -72,67 +80,106 @@
     </header>
 
     <main>
-      <div class="section-head">
-        <h2>논문 목록</h2>
-        <span class="count">5 papers</span>
-      </div>
-      <div class="paper-list">
-        <a class="paper-item" href="01_Accel-sim/accel-sim-analysis.html">
-          <div class="paper-item-left">
-            <span class="paper-num">01</span>
-            <div>
+      <div>
+        <div class="section-head">
+          <h2>논문 목록</h2>
+          <span class="count">5 papers</span>
+        </div>
+        <div class="paper-group">
+
+          <!-- 01 -->
+          <div class="paper-block">
+            <div class="paper-block-head">
+              <span class="paper-num">01</span>
               <h3>Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling</h3>
-              <span class="note-tag">Review</span>
             </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="01_Accel-sim/accel-sim-Selfmade.html">
+                  <span class="note-title">논문 정리 — Selfmade</span>
+                  <span class="note-badge">Review</span>
+                </a>
+              </li>
+              <li>
+                <a class="note-link" href="01_Accel-sim/Accel-Sim-by Claude.html">
+                  <span class="note-title">논문 정리 — by Claude</span>
+                  <span class="note-badge">Review</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <span class="arrow">›</span>
-        </a>
-        <a class="paper-item" href="02_Pre-gated MoE/pregated_moe_analysis.html">
-          <div class="paper-item-left">
-            <span class="paper-num">02</span>
-            <div>
+
+          <!-- 02 -->
+          <div class="paper-block">
+            <div class="paper-block-head">
+              <span class="paper-num">02</span>
               <h3>Pre-gated MoE: An Algorithm-System Co-Design for Fast and Scalable Mixture-of-Expert Inference</h3>
-              <span class="note-tag">Review</span>
             </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="02_Pre-gated MoE/pregated_moe_analysis.html">
+                  <span class="note-title">논문 분석</span>
+                  <span class="note-badge">Review</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <span class="arrow">›</span>
-        </a>
-        <a class="paper-item" href="03_Survey on Inference Optimization Techniques for Mixture of Experts Models/MoE_Inference_Survey_Analysis.html">
-          <div class="paper-item-left">
-            <span class="paper-num">03</span>
-            <div>
+
+          <!-- 03 -->
+          <div class="paper-block">
+            <div class="paper-block-head">
+              <span class="paper-num">03</span>
               <h3>A Survey on Inference Optimization Techniques for Mixture of Experts Models</h3>
-              <span class="note-tag">Review</span>
             </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="03_Survey on Inference Optimization Techniques for Mixture of Experts Models/MoE_Inference_Survey_Analysis.html">
+                  <span class="note-title">논문 분석</span>
+                  <span class="note-badge">Review</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <span class="arrow">›</span>
-        </a>
-        <a class="paper-item" href="04_Analyzing and Improving Hardware Modeling of Accel-Sim/accel-sim-analysis.html">
-          <div class="paper-item-left">
-            <span class="paper-num">04</span>
-            <div>
+
+          <!-- 04 -->
+          <div class="paper-block">
+            <div class="paper-block-head">
+              <span class="paper-num">04</span>
               <h3>Analyzing and Improving Hardware Modeling of Accel-Sim</h3>
-              <span class="note-tag">Review</span>
             </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="04_Analyzing and Improving Hardware Modeling of Accel-Sim/accel-sim-analysis.html">
+                  <span class="note-title">논문 분석</span>
+                  <span class="note-badge">Review</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <span class="arrow">›</span>
-        </a>
-        <a class="paper-item" href="05_HMS/HMS_HPCA2024_analysis.html">
-          <div class="paper-item-left">
-            <span class="paper-num">05</span>
-            <div>
+
+          <!-- 05 -->
+          <div class="paper-block">
+            <div class="paper-block-head">
+              <span class="paper-num">05</span>
               <h3>Bandwidth-Effective DRAM Cache for GPUs with Storage-Class Memory (HMS)</h3>
-              <span class="note-tag">Review</span>
             </div>
+            <ul class="note-list">
+              <li>
+                <a class="note-link" href="05_HMS/HMS_HPCA2024_analysis.html">
+                  <span class="note-title">논문 분석</span>
+                  <span class="note-badge">Review</span>
+                </a>
+              </li>
+            </ul>
           </div>
-          <span class="arrow">›</span>
-        </a>
+
+        </div>
       </div>
     </main>
 
     <footer class="site-footer">
       <span>Junon · Research Note Hub</span>
-      <span>Last updated 2026-06-17</span>
+      <span>Last updated 2026-06-18</span>
     </footer>
   </div>
 </body>

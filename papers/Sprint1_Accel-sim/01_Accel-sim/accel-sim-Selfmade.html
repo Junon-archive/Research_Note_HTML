@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 연구 미팅 — 2026.06.18</title>
+
+<!-- Pretendard (한글 본문) + KaTeX (수식). 오프라인이면 시스템 폰트로 대체됨 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#1a1a1f;
+    --muted:#6b7280;
+    --faint:#9ca3af;
+    --hair:#e8e8ec;
+    --hair-strong:#d6d6db;
+    --accent:#2545a6;
+    --accent-soft:#eef1fb;
+    --key:#2545a6;   --key-bg:#eef1fb;
+    --next:#0f766e;  --next-bg:#eafaf6;
+    --open:#b45309;  --open-bg:#fff7ec;
+    --recap:#57606a; --recap-bg:#f5f6f8;
+    --code-bg:#f6f7f9;
+    --code-ink:#27303f;
+    --maxw:840px;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Menlo",Consolas,monospace;
+    --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,
+           "Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:#eceef1;
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.72;
+    letter-spacing:-0.003em;
+    word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .doc{
+    counter-reset:sec;
+    max-width:var(--maxw);
+    margin:40px auto;
+    background:var(--paper);
+    padding:64px 68px 72px;
+    border:1px solid var(--hair);
+    border-radius:4px;
+    box-shadow:0 1px 2px rgba(20,20,30,.04),0 12px 40px rgba(20,20,30,.06);
+  }
+
+  /* ---------- Header ---------- */
+  .doc-eyebrow{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  .doc-title{
+    font-size:30px;
+    font-weight:700;
+    line-height:1.25;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+  }
+  .doc-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 30px;
+    padding-bottom:22px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:6px;
+  }
+  .doc-meta div{font-size:13.5px;line-height:1.5;}
+  .doc-meta .k{color:var(--faint);font-weight:500;margin-right:7px;}
+  .doc-meta .v{color:var(--ink);font-weight:600;}
+
+  /* ---------- Table of contents ---------- */
+  .toc{
+    margin:26px 0 4px;
+    padding:18px 20px;
+    background:var(--recap-bg);
+    border:1px solid var(--hair);
+    border-radius:6px;
+  }
+  .toc h4{
+    margin:0 0 10px;font-size:11.5px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  }
+  .toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  .toc li{counter-increment:toc;font-size:14px;margin:0 0 7px;break-inside:avoid;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);
+    color:var(--accent);font-variant-numeric:tabular-nums;
+    font-weight:700;font-size:11.5px;margin-right:9px;}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;}
+  .toc a:hover{border-bottom-color:var(--accent);}
+
+  /* ---------- Sections ---------- */
+  section.block{
+    counter-increment:sec;
+    margin:38px 0 0;
+    scroll-margin-top:20px;
+  }
+  section.block > h2{
+    position:relative;
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:-0.015em;
+    line-height:1.35;
+    margin:0 0 16px;
+    padding-bottom:9px;
+    border-bottom:1px solid var(--hair-strong);
+  }
+  section.block > h2::before{
+    content:counter(sec,decimal-leading-zero);
+    display:inline-block;
+    min-width:1.9em;
+    margin-right:.55em;
+    color:var(--accent);
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  h3{font-size:16.5px;font-weight:700;margin:24px 0 9px;letter-spacing:-0.01em;}
+  h4{font-size:14.5px;font-weight:700;color:var(--muted);margin:18px 0 7px;}
+
+  p{margin:0 0 13px;}
+  a{color:var(--accent);}
+  strong{font-weight:700;}
+  mark{background:#fff2a8;padding:0 .15em;border-radius:2px;}
+
+  ul,ol{margin:0 0 14px;padding-left:1.35em;}
+  li{margin:0 0 6px;}
+  li::marker{color:var(--accent);}
+  ul ul,ol ol,ul ol,ol ul{margin:6px 0 6px;}
+
+  hr{border:0;border-top:1px solid var(--hair);margin:28px 0;}
+
+  /* ---------- Callout sections (semantic) ---------- */
+  .block--callout{
+    padding:20px 24px 6px;
+    border:1px solid var(--hair);
+    border-left:4px solid var(--recap);
+    border-radius:0 7px 7px 0;
+    background:var(--recap-bg);
+  }
+  .block--callout > h2{
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:12px;
+    font-size:18px;
+  }
+  .tag{
+    display:inline-block;
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px;border-radius:20px;margin-right:10px;vertical-align:2px;
+  }
+  .block--key   {border-left-color:var(--key);   background:var(--key-bg);}
+  .block--key  .tag{background:var(--key);color:#fff;}
+  .block--next  {border-left-color:var(--next);  background:var(--next-bg);}
+  .block--next .tag{background:var(--next);color:#fff;}
+  .block--open  {border-left-color:var(--open);  background:var(--open-bg);}
+  .block--open .tag{background:var(--open);color:#fff;}
+  .block--recap {border-left-color:var(--recap); background:var(--recap-bg);}
+  .block--recap .tag{background:var(--recap);color:#fff;}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{overflow-x:auto;margin:6px 0 18px;}
+  table.data{
+    width:100%;border-collapse:collapse;font-size:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  table.data thead th{
+    background:#f3f4f7;color:var(--ink);font-weight:700;text-align:left;
+    padding:9px 13px;border-bottom:2px solid var(--hair-strong);
+    white-space:nowrap;
+  }
+  table.data td{padding:9px 13px;border-bottom:1px solid var(--hair);vertical-align:top;}
+  table.data tbody tr:last-child td{border-bottom:1px solid var(--hair-strong);}
+  table.data td.num,table.data th.num{text-align:right;}
+  table.data tbody tr:hover{background:#fafafb;}
+  table.data caption{
+    caption-side:bottom;text-align:left;color:var(--muted);
+    font-size:12.5px;margin-top:8px;
+  }
+
+  /* ---------- Code ---------- */
+  code{
+    font-family:var(--mono);font-size:.88em;
+    background:var(--code-bg);color:#b3186d;
+    padding:.12em .38em;border-radius:4px;
+  }
+  pre{
+    margin:6px 0 18px;background:var(--code-bg);color:var(--code-ink);
+    border:1px solid var(--hair);border-radius:8px;
+    padding:15px 17px;overflow-x:auto;line-height:1.6;
+  }
+  pre code{background:none;color:inherit;padding:0;font-size:13px;}
+  .codecard{margin:6px 0 18px;}
+  .codecard .codecard__name{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    background:#eceef1;border:1px solid var(--hair);border-bottom:none;
+    padding:6px 14px;border-radius:8px 8px 0 0;
+  }
+  .codecard pre{margin:0;border-radius:0 0 8px 8px;}
+
+  kbd{
+    font-family:var(--mono);font-size:.8em;background:#fff;color:var(--ink);
+    border:1px solid var(--hair-strong);border-bottom-width:2px;border-radius:5px;
+    padding:1px 6px;
+  }
+
+  /* ---------- Figures / quotes ---------- */
+  figure{margin:14px 0 18px;text-align:center;}
+  figure img{max-width:100%;border:1px solid var(--hair);border-radius:6px;}
+  figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;}
+  blockquote{
+    margin:14px 0;padding:4px 18px;color:#3f4754;
+    border-left:3px solid var(--accent);background:var(--accent-soft);
+    border-radius:0 6px 6px 0;
+  }
+  blockquote p:last-child{margin-bottom:0;}
+
+  /* ---------- Footer ---------- */
+  .doc-footer{
+    margin-top:48px;padding-top:16px;border-top:1px solid var(--hair);
+    font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:680px){
+    .doc{padding:36px 22px 44px;margin:0;border-radius:0;border-left:none;border-right:none;}
+    body{font-size:15.5px;}
+    .doc-title{font-size:25px;}
+    .toc ol{columns:1;}
+    section.block > h2{font-size:19px;}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff;}
+    .doc{box-shadow:none;border:none;margin:0;max-width:none;padding:0 6mm;}
+    section.block{break-inside:avoid-page;}
+    .block--callout,table.data,pre,figure{break-inside:avoid;}
+    a{color:var(--ink);text-decoration:none;}
+    .toc{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<article class="doc">
+
+  <header class="doc-header">
+    <p class="doc-eyebrow">Weekly Research Meeting</p>
+    <h1 class="doc-title">Accel-Sim 논문 정리 — 내 연구에의 적용</h1>
+    <div class="doc-meta">
+      <div><span class="k">작성자</span><span class="v">Junon</span></div>
+      <div><span class="k">지도교수</span><span class="v">홍정규 교수님</span></div>
+      <div><span class="k">주차</span><span class="v">2026-W25</span></div>
+      <div><span class="k">일자</span><span class="v">2026.06.18</span></div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <h4>목차</h4>
+    <ol>
+      <li><a href="#s-overview">논문 한눈에 보기</a></li>
+      <li><a href="#s-core">논문 핵심 사항</a></li>
+      <li><a href="#s-needed">나한테 필요한 정보</a></li>
+      <li><a href="#s-misconceptions">잘못 이해한 내용 &amp; 이번에 알아가는 내용</a></li>
+      <li><a href="#s-takeaway">내 연구에의 적용</a></li>
+      <li><a href="#s-conclusion">나만의 결론</a></li>
+      <li><a href="#s-glossary">용어 정리</a></li>
+      <li><a href="#s-phrases">논문 리딩용 영어 표현</a></li>
+    </ol>
+  </nav>
+
+  <!-- 01 -->
+  <section id="s-overview" class="block block--callout block--recap">
+    <h2><span class="tag">Recap</span>논문 한눈에 보기</h2>
+    <p>
+      <strong>출처:</strong> ISCA 2020 / Mahmoud Khairy, Zhesheng Shen, Tor M. Aamodt, Timothy G. Rogers / Purdue University &amp; UBC<br>
+      <strong>링크:</strong> <a href="https://doi.org/10.1109/ISCA45697.2020.00047">IEEE DOI</a> | <a href="https://mkhairy.github.io/Docs/Accel-Sim.pdf">저자 PDF</a><br>
+      <strong>분류 태그:</strong> <code>#GPU-simulation</code> <code>#trace-driven</code> <code>#mISA</code> <code>#GPGPU</code> <code>#accelerator</code> <code>#validation</code> <code>#HW-SW-codesign</code>
+    </p>
+    <p><strong>TL;DR:</strong> NVIDIA SASS 트레이스 기반 frontend + 대폭 강화된 memory system 모델로 GPGPU-Sim 3.x 대비 cycle error를 94% → 15%로 줄인 오픈소스 GPU 시뮬레이션 프레임워크.</p>
+    <h3>핵심 기여</h3>
+    <ol>
+      <li>NVBit 기반 SASS 트레이서 → ISA-independent intermediate representation 변환 <strong>trace-driven frontend</strong> (cuDNN 등 closed-source 라이브러리 시뮬레이션 최초 지원)</li>
+      <li>GPGPU-Sim 4.0: sub-warp sectored coalescer, adaptive streaming L1, IPOLY L2 hashing, HBM dual-bus, write-validate sub-sector write 정책 등 <strong>memory system 대폭 상세화</strong></li>
+      <li>38개 microbenchmark + 자동 파라미터 tuner + correlation 시각화 도구로 이루어진 <strong>validation 인프라</strong></li>
+      <li>Kepler → Turing 4세대 GPU를 단일 프레임워크로 모델링하는 <strong>multi-generation 유연성</strong> 실증</li>
+      <li>구식 베이스라인이 숨기는 두 가지 연구 기회(L1 throughput 병목 소멸, FR-FCFS 효과 극대화)를 보여주는 <strong>case study</strong></li>
+    </ol>
+    <blockquote>
+      <p>핵심 통찰: 시뮬레이터가 현대 하드웨어를 충분히 정밀하게 모델링하지 못하면, 연구가 발견하는 "병목"과 "기회"가 실리콘에 존재하지 않는 허상일 수 있음.</p>
+    </blockquote>
+  </section>
+
+  <!-- 02 -->
+  <section id="s-core" class="block">
+    <h2>논문 핵심 사항</h2>
+
+    <h3>1.1 해결하고자 한 문제</h3>
+    <ol>
+      <li><strong>기능적 문제:</strong> 매년 새 mISA가 등장하는데 이에 맞춰 기능 모델을 유지하는 비용이 너무 큼. cuDNN 같은 hand-tuned SASS 바이너리는 PTX 표현 자체가 없어 기존 simulator에서 실행 불가한 경우도 있음.</li>
+      <li><strong>정확도 문제:</strong> Volta QV100에서 GPGPU-Sim 3.x는 cycle error 94%, correlation 0.87 (논문 기준). 이 수준의 오차는 "어떤 아이디어가 효과적인가"를 잘못 판단하게 만듦.</li>
+    </ol>
+
+    <h3>1.2 핵심 아이디어</h3>
+    <p>고정된 함수 모델을 직접 구현하는 대신 <strong>Trace-driven 시뮬레이션</strong>을 채택한 프레임워크인 Accel-Sim을 제안.</p>
+    <p>SASS 트레이스를 직접 입력으로 받아 시뮬레이션함으로써, functional model 구현에 대한 의존도를 낮추고 performance model의 정확도와 유연성을 높이는 것이 목표. Accuracy는 성능 모델(GPGPU-Sim 4.0)의 상세도가 결정하므로, 저자들은 memory system을 중심으로 현대 GPU 아키텍처를 역공학하여 반영.</p>
+    <p>즉, 실제 하드웨어가 실행하는 코드를 그대로 재현함으로써, 모델링의 시작점인 'Baseline'을 실제 하드웨어와 일치시키는 데 중점을 둠.</p>
+
+    <h3>1.3 문제를 해결한 방법</h3>
+    <figure>
+      <img src="assets/Pasted image 20260618163100.png" alt="Fig. 1: Accel-Sim's end-to-end flow">
+      <figcaption>Fig. 1. Accel-Sim의 end-to-end 흐름</figcaption>
+    </figure>
+    <p>NVIDIA의 NVBit을 활용한 트레이스 생성기와 PTX 기반의 에뮬레이션 모드를 모두 지원하는 <strong>'Ambidextrous(양손잡이형) 프론트엔드'</strong>를 구축.</p>
+    <p>또한, 마이크로벤치마크를 통해 하드웨어의 L1/L2 캐시 및 메모리 시스템의 파라미터를 자동으로 추론하고 구성하는 튜닝 인프라를 도입.</p>
+
+    <h3>1.4 Contribution</h3>
+    <ul>
+      <li>최신 CUDA 바이너리 및 폐쇄형 라이브러리(cuDNN 등)를 시뮬레이션할 수 있는 <strong>확장 가능한 프레임워크 제공</strong> — 기존 오픈소스 시뮬레이터의 한계 극복.</li>
+      <li>Kepler에서 Turing 세대까지의 GPU를 모델링하며 성능 모델의 정확도를 대폭 향상, 기존 대비 <strong>Cycle error를 79%포인트 감소</strong>.</li>
+      <li><strong>하드웨어 검증을 자동화하는 일련의 도구(Microbenchmarks, Tuner, Correlator)를 공개</strong> — 향후 연구자들이 새로운 하드웨어 설계를 빠르게 검증할 수 있는 표준 방법론 제시.</li>
+    </ul>
+  </section>
+
+  <!-- 03 -->
+  <section id="s-needed" class="block">
+    <h2>나한테 필요한 정보</h2>
+
+    <h3>2.1.1 모드가 두 개</h3>
+    <blockquote>
+      <p>Our new frontend supports both vISA (PTX) execution-driven and mISA (SASS) trace-driven simulation</p>
+    </blockquote>
+    <ul>
+      <li>Accel-Sim은 사용자가 필요에 따라 execution-driven / trace-driven 모드를 선택할 수 있도록 설계됨.</li>
+      <li>데이터 값에 의존적인 복잡한 시뮬레이션이나 동적인 제어 흐름을 정확히 보려면 <strong>Execution-driven mode</strong> 사용.</li>
+      <li>성능 분석 속도를 높이거나 SASS 수준의 분석이 필요할 때는 <strong>Trace-driven mode</strong> 활용.
+        <ul>
+          <li>Trace-driven 모드에서는 mISA가 SASS 명령어를 갖는 ISA에 비의존적인 중간표현으로 변환되어 사용됨.</li>
+          <li>기능적 에뮬레이션을 생략하고 핵심 작업만 선별적으로 시뮬레이션함으로써 기존 시뮬레이터 대비 월등한 속도와 최신 GPU SASS 코드까지 정밀 모사 가능.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>2.1.2 새로운 Specialized Unit 추가 시</h3>
+    <blockquote>
+      <p>To add a new specialized unit, the user declares the new unit in the configuration file and maps the machine ISA op codes that use this unit in the ISA def file.</p>
+    </blockquote>
+    <ul>
+      <li>Config에 새로운 Unit 선언 필요.</li>
+      <li>ISA Def 파일에서 해당 유닛을 사용하는 machine ISA op code를 매핑해야 함.</li>
+      <li>Execution-driven PTX 지원이 필요한 경우, 에뮬레이션하는 코드도 직접 작성해야 함.</li>
+    </ul>
+    <p><strong>내 경우에의 적용 — "Config 수정이냐, ISA 수정이냐":</strong></p>
+    <ul>
+      <li>단순히 하드웨어 구성(캐시 용량, 레이턴시 등)을 바꾸는 것이라면 Performance Model만 수정하면 되므로 에뮬레이터 수정 불필요.</li>
+      <li>새로운 하드웨어 기능을 활용하기 위해 새로운 명령어(ISA)를 도입하거나 기존 명령어의 동작을 PTX 수준에서 재정의해야 한다면, GPGPU-Sim 4.0의 Functional Simulator(에뮬레이터) 수정이 필수.</li>
+    </ul>
+
+    <h3>2.1.3 마이크로벤치마크로 직접 알 수 없는 파라미터</h3>
+    <blockquote>
+      <p>For other parameters that cannot be directly determined by our microbenchmarks (such as warp scheduling, memory scheduling, the L2 cache interleaving granularity and the L2 cache hashing function), Accel-Sim simulates each possible combination of these four parameters on a set of memory benchmarks.</p>
+    </blockquote>
+    <p>warp scheduling, memory scheduling, L2 cache interleaving granularity, L2 cache hashing function 등은 직접 측정이 불가함. GPU 핵심 제어 로직이나 고도로 최적화된 하드웨어 배선 수준에서 결정되는 정책이기 때문.</p>
+    <p><strong>해결 방법 — 탐색 기반 추정:</strong></p>
+    <ul>
+      <li><strong>탐색 기반 추정:</strong> 직접적인 측정값이 없기 때문에 발생 가능한 combination을 시뮬레이터에서 미리 설정하고 시뮬레이션 수행.</li>
+      <li><strong>상관관계 분석:</strong> 시뮬레이션된 각 조합의 결과값과 실제 하드웨어에서 측정된 프로파일링 데이터(nvprof, nsight 등)를 비교.</li>
+      <li><strong>최적 조합 선정:</strong> 실제 하드웨어 데이터와 가장 높은 correlation을 보이는 설정을 자동으로 찾아 해당 GPU 모델에 최적화된 파라미터로 고정.</li>
+    </ul>
+
+    <h3>2.1.4 제공되는 140개 Workload의 활용</h3>
+    <figure>
+      <img src="assets/Pasted image 20260618185809.png" alt="Table: Benchmark suites and trace sizes">
+      <figcaption>Table. Accel-Sim이 제공하는 벤치마크 suite 및 trace 크기</figcaption>
+    </figure>
+    <ul>
+      <li>예를 들어 llama3-8b의 디코드 일부만 떼어서 돌린다면, 제공 workload 없이 직접 trace를 만들어 사용하면 됨.</li>
+      <li>HW 수정 부분에 대한 성능 평가만 해보고 싶다면 제공된 trace를 활용할 수도 있음.</li>
+      <li>저자들이 만들어 놓은 trace가 존재한다는 정도로 이해하면 충분.</li>
+    </ul>
+  </section>
+
+  <!-- 04 -->
+  <section id="s-misconceptions" class="block">
+    <h2>잘못 이해한 내용 &amp; 이번에 알아가는 내용</h2>
+
+    <h3>2.2.1 Trace는 HW가 바뀌어도 그대로 쓴다?</h3>
+    <p>특정 작업(Workload)에 대한 Trace를 한 번 생성해두면, 시뮬레이터의 설정을 변경하여 다양한 HW 구조에서의 성능을 비교/평가할 수 있음. 매번 Trace를 생성하는 것이 아님.</p>
+    <ul>
+      <li>Trace는 ISA-independent한 중간 표현(Intermediate Representation)으로 변환되어 Performance Model로 전달됨.</li>
+      <li>프로그램의 논리적 흐름과 메모리 접근 정보는 Trace에 담겨 있고, 이 정보를 어떻게 처리(Timing 계산)할지는 Performance Model 설정에 달려 있음.</li>
+    </ul>
+
+    <h3>2.2.2 그렇다고 HW 수정 후 Trace를 무조건 그대로 쓸 수 있는 건 아님</h3>
+    <p>하드웨어 설정을 변경할 때, 해당 변경 사항을 시뮬레이터가 인식할 수 있도록 config 파일 등을 수정하는 과정은 반드시 필요.</p>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 1. Trace와 Config의 역할 구분</caption>
+        <thead>
+          <tr><th>구분</th><th>담는 정보</th><th>HW 변경 시</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Trace</strong></td><td>어떤 명령어들이 어떤 순서로 실행되는가 (데이터 흐름)</td><td>프로그램이 바뀌지 않는 한 대부분 동일</td></tr>
+          <tr><td><strong>Config</strong></td><td>명령어들을 처리하는 하드웨어 자원이 얼마나 있는가</td><td>변경된 HW에 맞게 반드시 수정 필요</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Accel-Sim은 고정된 Trace를 입력받고, 수정된 Config 설정에 따라 해당 명령어들이 얼마나 빨리/느리게 완료되는지를 계산.</p>
+
+    <h3>2.2.3 HW의 ISA 자체가 변경되는 경우</h3>
+    <p>새로운 명령어가 추가되는 경우, Accel-Sim의 <strong>ISA Def 파일을 수정</strong>해야 함. 새로운 명령어가 어떤 실행 유닛에서 처리되어야 하는지 매핑 정보를 업데이트해 주어야 함.</p>
+
+    <h3>2.2.4 [2.2.1]~[2.2.3] 정리</h3>
+    <blockquote>
+      <p>HW 설정이 변경되어도 Trace를 그대로 쓸 수 있는 것 맞음.<br>
+      그러나, Config 설정은 변경된 HW에 따라 수정해줘야 함.<br>
+      그러나, 새로운 ISA가 도입되는 HW 수정이라면, ISA Def 파일까지 수정해야 함.</p>
+    </blockquote>
+  </section>
+
+  <!-- 05 -->
+  <section id="s-takeaway" class="block block--callout block--key">
+    <h2><span class="tag">Key</span>내 연구에의 적용</h2>
+
+    <h3>3.1 내 연구에서 Accel-Sim을 어떻게 수정해야 하는가</h3>
+    <ul>
+      <li><strong>Config 수정만으로 끝나는 부분:</strong> offloading 타겟이 되는 메모리 계층(L1/L2/HBM)의 용량, 레이턴시, 대역폭 파라미터 조정 등.</li>
+      <li><strong>Performance Model(GPGPU-Sim 4.0) 코드 수정이 필요한 부분:</strong> Prefetch 로직 자체 — 어떤 head를 언제 prefetch할지 결정하는 정책은 기존 구조에 없으니 C++ 코드 레벨 수정 불가피.</li>
+      <li><strong>ISA Def 수정이 필요한지:</strong> offloading/prefetch를 새로운 명령어(ISA)로 추상화하지 않고 기존 LD/ST 명령어로 모델링한다면 ISA Def 수정 불필요. 반면 prefetch instruction을 명시적으로 넣으려면 필요.</li>
+    </ul>
+
+    <h3>3.2 Trace 재사용 전략</h3>
+    <ul>
+      <li>Prefetch 정책 변경, 메모리 계층 파라미터 변경 등은 <strong>Config 레벨에서만 바꾸면서</strong> 반복 실험 가능.</li>
+      <li><mark>단, Prefetch 동작 자체가 메모리 접근 패턴을 바꾼다면 — 즉, prefetch로 인해 실제로 실행되는 메모리 instruction이 달라진다면 — trace를 다시 생성해야 함.</mark></li>
+      <li>이 경우 execution-driven mode로 fallback하거나, prefetch를 별도 inject하는 방식을 고려해야 함.</li>
+    </ul>
+
+    <h3>3.3 Validation 인프라 활용 방법</h3>
+    <p>논문이 강조하는 microbenchmark + correlator 파이프라인은 HW 수정 후 "이 모델이 실제와 얼마나 가까운가"를 검증하는 데 그대로 활용 가능.</p>
+    <ul>
+      <li>기존 38개 microbenchmark 중 memory latency/bandwidth 관련 것들은 offloading 경로 검증에 바로 활용 가능.</li>
+      <li>Prefetch 효과 측정을 위한 <strong>custom microbenchmark를 추가</strong>해야 할 수 있음.
+        <ul>
+          <li>논문의 Figure 3 (L1 latency 벤치마크) 작성 패턴을 그대로 따르면 됨.</li>
+        </ul>
+      </li>
+    </ul>
+    <figure>
+      <img src="assets/Pasted image 20260618191929.png" alt="Fig. 3: L1 latency microbenchmark">
+      <figcaption>Fig. 3. L1 latency microbenchmark (논문 Figure 3) — custom microbenchmark 작성 시 이 패턴을 따름</figcaption>
+    </figure>
+  </section>
+
+  <!-- 06 -->
+  <section id="s-conclusion" class="block block--callout block--next">
+    <h2><span class="tag">Next</span>나만의 결론</h2>
+
+    <h3>4.1 Accel-Sim 수정의 범위와 순서</h3>
+    <div class="codecard">
+      <div class="codecard__name">수정 레이어 구분</div>
+      <pre><code>Layer 1 (Config만 수정) — HW 파라미터 바꾸기
+  → offloading 대상 메모리 계층 설정
+  → 빠름, 검증 쉬움
+
+Layer 2 (GPGPU-Sim 4.0 C++ 수정) — Prefetch 정책 구현
+  → 어떤 head를 언제 prefetch할지 스케줄링 로직
+  → 시간 많이 걸림, 이 부분이 연구의 핵심 contribution
+
+Layer 3 (ISA Def 수정) — 필요시만
+  → Prefetch를 명시적 명령어로 넣으려면 필요
+  → 아마 초기 단계에서는 불필요</code></pre>
+    </div>
+
+    <h3>4.2 실험 설계에서 생길 트레이드오프</h3>
+    <ul>
+      <li>Trace는 특정 HW에서 실행된 결과물이므로, prefetch로 바꾸는 메모리 접근 패턴이 trace 자체에 반영되지 않음.</li>
+      <li>이 문제를 어떻게 다룰지 — execution-driven mode로 전환하거나, prefetch injection을 trace에 수동으로 추가하거나 — 가 실험 설계의 핵심 결정 포인트.</li>
+    </ul>
+
+    <h3>4.3 한 줄 요약</h3>
+    <blockquote>
+      <p>Accel-Sim은 Trace를 고정하고 HW를 바꿔가며 실험하기에 최적화된 도구. 내 연구에서도 trace를 한 번 생성해두고 offloading/prefetch 정책과 메모리 파라미터를 바꾸며 반복 실험하는 방식으로 활용하되, prefetch가 instruction 흐름 자체를 바꾸는 시점에서는 execution-driven으로 전환하는 기준을 사전에 설정해두어야 함.</p>
+    </blockquote>
+  </section>
+
+  <!-- 07 -->
+  <section id="s-glossary" class="block">
+    <h2>용어 정리</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 2. Accel-Sim 관련 주요 용어</caption>
+        <thead>
+          <tr><th>용어</th><th>정의</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>vISA (virtual ISA)</strong></td><td>PTX: NVIDIA의 추상 ISA. 컴파일러가 생성, 드라이버가 mISA로 JIT 컴파일.</td></tr>
+          <tr><td><strong>mISA (machine ISA)</strong></td><td>SASS: 특정 GPU 세대의 실제 하드웨어 명령어. sm_70=Volta, sm_75=Turing 등.</td></tr>
+          <tr><td><strong>NVBit</strong></td><td>NVIDIA의 dynamic binary instrumentation framework. SASS 레벨에서 동작, LD_PRELOAD 방식.</td></tr>
+          <tr><td><strong>SASS</strong></td><td>Shader ASSembly. NVIDIA GPU의 mISA.</td></tr>
+          <tr><td><strong>sub-core</strong></td><td>Volta 이후 SM의 기본 단위: warp scheduler + 전용 RF + 전용 EU.</td></tr>
+          <tr><td><strong>sectored cache</strong></td><td>128B cache line을 32B sector 4개로 분할. tag는 128B, data fetch는 32B 단위.</td></tr>
+          <tr><td><strong>partition camping</strong></td><td>$2^n$ 메모리 bank에서 $2^k$ stride 접근이 특정 bank에 집중되는 현상.</td></tr>
+          <tr><td><strong>IPOLY hashing</strong></td><td>Galois field irreducible polynomial 기반 L2 bank index 생성. camping 완화.</td></tr>
+          <tr><td><strong>write-validate</strong></td><td>write miss 시 DRAM fetch 없이 sector에 기록 후 byte-level mask로 유효성 추적.</td></tr>
+          <tr><td><strong>MSHR</strong></td><td>Miss Status Holding Register. in-flight cache miss 추적 구조.</td></tr>
+          <tr><td><strong>simulation-gating</strong></td><td>할 일 없는 컴포넌트의 cycle tick을 skip하는 속도 최적화.</td></tr>
+          <tr><td><strong>FR-FCFS</strong></td><td>First-Row First-Come First-Serve. row-buffer hit를 우선 처리하는 DRAM 스케줄러.</td></tr>
+          <tr><td><strong>active mask</strong></td><td>warp 내 현재 cycle에 active한 thread 비트맵 (32bit).</td></tr>
+          <tr><td><strong>ISA Def 파일</strong></td><td>SASS opcode → execution unit 매핑 파일. 사용자가 공개 문서로 작성.</td></tr>
+          <tr><td><strong>HW Def 파일</strong></td><td>SM 수, warp 크기 등 기초 HW 파라미터 정의 파일. microbenchmark가 참조.</td></tr>
+          <tr><td><strong>NRMSE</strong></td><td>Normalized RMSE. 참값이 0인 counter에 사용.</td></tr>
+          <tr><td><strong>Correl</strong></td><td>Karl Pearson coefficient of variation (σ/μ). HW vs Sim 추세 일치도.</td></tr>
+          <tr><td><strong>kernelslist</strong></td><td>Accel-Sim trace 디렉토리의 kernel 실행 순서 메타파일.</td></tr>
+          <tr><td><strong>base+stride compression</strong></td><td>규칙적 메모리 접근 패턴을 (base, stride) 쌍으로 압축.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="s-phrases" class="block">
+    <h2>논문 리딩용 영어 표현</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 3. 논문 리딩에 유용한 영어 표현</caption>
+        <thead>
+          <tr><th>영어 표현</th><th>뜻</th><th>사용 예시</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Bridge the gap</strong></td><td>격차를 줄이다/해소하다</td><td>We introduce mechanisms to bridge the gap between industrial innovation and research.</td></tr>
+          <tr><td><strong>Keep up with</strong></td><td>~를 따라잡다/최신 상태를 유지하다</td><td>Simulators must keep up with rapid changes in contemporary GPU designs.</td></tr>
+          <tr><td><strong>In-flight</strong></td><td>(데이터/명령어가) 처리 중인</td><td>GPU simulations involve thousands of in-flight memory requests.</td></tr>
+          <tr><td><strong>At the expense of</strong></td><td>~를 희생하여/대가로</td><td>Adding detail often comes at the expense of increased simulation time.</td></tr>
+          <tr><td><strong>Pinpoint</strong></td><td>정확히 찾아내다/규명하다</td><td>We use microbenchmarks to pinpoint latency and bandwidth changes.</td></tr>
+          <tr><td><strong>Drive (development/results)</strong></td><td>(결과를) 유도하다/이끌다</td><td>These correlation results drive the development of our performance model.</td></tr>
+          <tr><td><strong>Take steps to</strong></td><td>~하기 위한 조치를 취하다</td><td>We take steps to improve the simulator's speed.</td></tr>
+          <tr><td><strong>Pave the way for</strong></td><td>~의 토대를 마련하다</td><td>This framework paves the way for future research in GPU systems.</td></tr>
+          <tr><td><strong>In the presence of</strong></td><td>~가 존재하는 환경에서/상황에서</td><td>The L2 write policy conserves bandwidth in the presence of sub-sector reads.</td></tr>
+          <tr><td><strong>Expose</strong></td><td>(숨겨진 것을) 드러내다/폭로하다</td><td>Counter-by-counter validation exposes several changes in hardware.</td></tr>
+          <tr><td><strong>Prohibitively large</strong></td><td>(비용/시간이) 너무 커서 실행 불가능한</td><td>Some workloads are omitted as their trace sizes are prohibitively large.</td></tr>
+          <tr><td><strong>Alleviate</strong></td><td>완화하다</td><td>New design techniques alleviate the bottlenecks present in older models.</td></tr>
+          <tr><td><strong>Obscured by</strong></td><td>~에 의해 가려진/흐려진</td><td>Some performance issues are obscured by less detailed simulation models.</td></tr>
+          <tr><td><strong>In light of</strong></td><td>~를 고려하여/비추어 볼 때</td><td>In light of slowing Moore's law, we must focus on domain-specific pipelines.</td></tr>
+          <tr><td><strong>A trade-off between</strong></td><td>~ 사이의 상충 관계(트레이드오프)</td><td>Simulation-gating is a trade-off between event-driven and cycle-driven simulation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="doc-footer">
+    <span>Junon · 주간 연구 미팅 노트</span>
+    <span>2026.06.18</span>
+  </footer>
+
+</article>
+
+<!-- 수식 자동 렌더 (md에 수식이 없어도 그냥 둬도 무해) -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false}
+  ],throwOnError:false});"></script>
+</body>
+</html>

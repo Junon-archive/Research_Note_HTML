@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 연구 미팅 — Accel-Sim 논문 분석</title>
+
+<!-- Pretendard (한글 본문) + KaTeX (수식). 오프라인이면 시스템 폰트로 대체됨 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#1a1a1f;
+    --muted:#6b7280;
+    --faint:#9ca3af;
+    --hair:#e8e8ec;
+    --hair-strong:#d6d6db;
+    --accent:#2545a6;
+    --accent-soft:#eef1fb;
+    --key:#2545a6;   --key-bg:#eef1fb;
+    --next:#0f766e;  --next-bg:#eafaf6;
+    --open:#b45309;  --open-bg:#fff7ec;
+    --recap:#57606a; --recap-bg:#f5f6f8;
+    --code-bg:#f6f7f9;
+    --code-ink:#27303f;
+    --maxw:840px;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono","Menlo",Consolas,monospace;
+    --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,
+           "Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:#eceef1;
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.72;
+    letter-spacing:-0.003em;
+    word-break:keep-all;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .doc{
+    counter-reset:sec;
+    max-width:var(--maxw);
+    margin:40px auto;
+    background:var(--paper);
+    padding:64px 68px 72px;
+    border:1px solid var(--hair);
+    border-radius:4px;
+    box-shadow:0 1px 2px rgba(20,20,30,.04),0 12px 40px rgba(20,20,30,.06);
+  }
+
+  /* ---------- Header ---------- */
+  .doc-eyebrow{
+    font-size:12.5px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  .doc-title{
+    font-size:30px;
+    font-weight:700;
+    line-height:1.25;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+  }
+  .doc-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 30px;
+    padding-bottom:22px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:6px;
+  }
+  .doc-meta div{font-size:13.5px;line-height:1.5;}
+  .doc-meta .k{color:var(--faint);font-weight:500;margin-right:7px;}
+  .doc-meta .v{color:var(--ink);font-weight:600;}
+
+  /* ---------- Table of contents ---------- */
+  .toc{
+    margin:26px 0 4px;
+    padding:18px 20px;
+    background:var(--recap-bg);
+    border:1px solid var(--hair);
+    border-radius:6px;
+  }
+  .toc h4{
+    margin:0 0 10px;font-size:11.5px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  }
+  .toc ol{margin:0;padding:0;list-style:none;counter-reset:toc;
+    columns:2;column-gap:36px;}
+  .toc li{counter-increment:toc;font-size:14px;margin:0 0 7px;break-inside:avoid;}
+  .toc li::before{content:counter(toc,decimal-leading-zero);
+    color:var(--accent);font-variant-numeric:tabular-nums;
+    font-weight:700;font-size:11.5px;margin-right:9px;}
+  .toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;}
+  .toc a:hover{border-bottom-color:var(--accent);}
+
+  /* ---------- Sections ---------- */
+  section.block{
+    counter-increment:sec;
+    margin:38px 0 0;
+    scroll-margin-top:20px;
+  }
+  section.block > h2{
+    position:relative;
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:-0.015em;
+    line-height:1.35;
+    margin:0 0 16px;
+    padding-bottom:9px;
+    border-bottom:1px solid var(--hair-strong);
+  }
+  section.block > h2::before{
+    content:counter(sec,decimal-leading-zero);
+    display:inline-block;
+    min-width:1.9em;
+    margin-right:.55em;
+    color:var(--accent);
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+    font-size:15px;
+  }
+
+  h3{font-size:16.5px;font-weight:700;margin:24px 0 9px;letter-spacing:-0.01em;}
+  h4{font-size:14.5px;font-weight:700;color:var(--muted);margin:18px 0 7px;}
+
+  p{margin:0 0 13px;}
+  a{color:var(--accent);}
+  strong{font-weight:700;}
+  mark{background:#fff2a8;padding:0 .15em;border-radius:2px;}
+
+  ul,ol{margin:0 0 14px;padding-left:1.35em;}
+  li{margin:0 0 6px;}
+  li::marker{color:var(--accent);}
+  ul ul,ol ol,ul ol,ol ul{margin:6px 0 6px;}
+
+  hr{border:0;border-top:1px solid var(--hair);margin:28px 0;}
+
+  /* ---------- Callout sections (semantic) ---------- */
+  .block--callout{
+    padding:20px 24px 6px;
+    border:1px solid var(--hair);
+    border-left:4px solid var(--recap);
+    border-radius:0 7px 7px 0;
+    background:var(--recap-bg);
+  }
+  .block--callout > h2{
+    border-bottom:none;
+    padding-bottom:0;
+    margin-bottom:12px;
+    font-size:18px;
+  }
+  .tag{
+    display:inline-block;
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px;border-radius:20px;margin-right:10px;vertical-align:2px;
+  }
+  .block--key   {border-left-color:var(--key);   background:var(--key-bg);}
+  .block--key  .tag{background:var(--key);color:#fff;}
+  .block--next  {border-left-color:var(--next);  background:var(--next-bg);}
+  .block--next .tag{background:var(--next);color:#fff;}
+  .block--open  {border-left-color:var(--open);  background:var(--open-bg);}
+  .block--open .tag{background:var(--open);color:#fff;}
+  .block--recap {border-left-color:var(--recap); background:var(--recap-bg);}
+  .block--recap .tag{background:var(--recap);color:#fff;}
+
+  /* ---------- Tables ---------- */
+  .table-wrap{overflow-x:auto;margin:6px 0 18px;}
+  table.data{
+    width:100%;border-collapse:collapse;font-size:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  table.data thead th{
+    background:#f3f4f7;color:var(--ink);font-weight:700;text-align:left;
+    padding:9px 13px;border-bottom:2px solid var(--hair-strong);
+    white-space:nowrap;
+  }
+  table.data td{padding:9px 13px;border-bottom:1px solid var(--hair);vertical-align:top;}
+  table.data tbody tr:last-child td{border-bottom:1px solid var(--hair-strong);}
+  table.data td.num,table.data th.num{text-align:right;}
+  table.data tbody tr:hover{background:#fafafb;}
+  table.data caption{
+    caption-side:bottom;text-align:left;color:var(--muted);
+    font-size:12.5px;margin-top:8px;
+  }
+
+  /* ---------- Code ---------- */
+  code{
+    font-family:var(--mono);font-size:.88em;
+    background:var(--code-bg);color:#b3186d;
+    padding:.12em .38em;border-radius:4px;
+  }
+  pre{
+    margin:6px 0 18px;background:var(--code-bg);color:var(--code-ink);
+    border:1px solid var(--hair);border-radius:8px;
+    padding:15px 17px;overflow-x:auto;line-height:1.6;
+  }
+  pre code{background:none;color:inherit;padding:0;font-size:13px;}
+  .codecard{margin:6px 0 18px;}
+  .codecard .codecard__name{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    background:#eceef1;border:1px solid var(--hair);border-bottom:none;
+    padding:6px 14px;border-radius:8px 8px 0 0;
+  }
+  .codecard pre{margin:0;border-radius:0 0 8px 8px;}
+
+  kbd{
+    font-family:var(--mono);font-size:.8em;background:#fff;color:var(--ink);
+    border:1px solid var(--hair-strong);border-bottom-width:2px;border-radius:5px;
+    padding:1px 6px;
+  }
+
+  /* ---------- Figures / quotes ---------- */
+  figure{margin:14px 0 18px;text-align:center;}
+  figure img{max-width:100%;border:1px solid var(--hair);border-radius:6px;}
+  figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;}
+  blockquote{
+    margin:14px 0;padding:4px 18px;color:#3f4754;
+    border-left:3px solid var(--accent);background:var(--accent-soft);
+    border-radius:0 6px 6px 0;
+  }
+  blockquote p:last-child{margin-bottom:0;}
+
+  /* ---------- Footer ---------- */
+  .doc-footer{
+    margin-top:48px;padding-top:16px;border-top:1px solid var(--hair);
+    font-size:12px;color:var(--faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:680px){
+    .doc{padding:36px 22px 44px;margin:0;border-radius:0;border-left:none;border-right:none;}
+    body{font-size:15.5px;}
+    .doc-title{font-size:25px;}
+    .toc ol{columns:1;}
+    section.block > h2{font-size:19px;}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff;}
+    .doc{box-shadow:none;border:none;margin:0;max-width:none;padding:0 6mm;}
+    section.block{break-inside:avoid-page;}
+    .block--callout,table.data,pre,figure{break-inside:avoid;}
+    a{color:var(--ink);text-decoration:none;}
+    .toc{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<article class="doc">
+
+  <header class="doc-header">
+    <p class="doc-eyebrow">Weekly Research Meeting</p>
+    <h1 class="doc-title">Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling</h1>
+    <div class="doc-meta">
+      <div><span class="k">작성자</span><span class="v">Junon</span></div>
+      <div><span class="k">지도교수</span><span class="v">홍정규 교수님</span></div>
+      <div><span class="k">출처</span><span class="v">ISCA 2020 · Khairy et al.</span></div>
+      <div><span class="k">분류</span><span class="v">#GPU-simulation #trace-driven #mISA #GPGPU #validation</span></div>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <h4>목차</h4>
+    <ol>
+      <li><a href="#s-overview">한눈에 보기</a></li>
+      <li><a href="#s-problem">문제 정의 &amp; 동기</a></li>
+      <li><a href="#s-idea">핵심 아이디어</a></li>
+      <li><a href="#s-background">배경</a></li>
+      <li><a href="#s-method">제안 방법 상세</a></li>
+      <li><a href="#s-system">시스템 · HW 측면</a></li>
+      <li><a href="#s-experiment">실험 셋업 &amp; 재현 관점</a></li>
+      <li><a href="#s-results">결과 분석</a></li>
+      <li><a href="#s-critique">비판적 분석</a></li>
+      <li><a href="#s-related">관련 연구 맥락</a></li>
+      <li><a href="#s-myresearch">내 연구와의 연결점 · 적용 가능성</a></li>
+      <li><a href="#s-terms">핵심 용어 정리</a></li>
+      <li><a href="#s-open">미해결 질문 / 더 읽을 것</a></li>
+    </ol>
+  </nav>
+
+  <!-- 01 -->
+  <section id="s-overview" class="block block--callout block--key">
+    <h2><span class="tag">Key</span>한눈에 보기</h2>
+    <p><strong>TL;DR</strong>: NVIDIA SASS 트레이스 기반 frontend + 대폭 강화된 memory system 모델로 GPGPU-Sim 3.x 대비 cycle error를 94% → 15%로 줄인 오픈소스 GPU 시뮬레이션 프레임워크.</p>
+    <p><strong>출처</strong>: ISCA 2020 / Mahmoud Khairy, Zhesheng Shen, Tor M. Aamodt, Timothy G. Rogers / Purdue University &amp; UBC<br>
+    <strong>링크</strong>: <a href="https://doi.org/10.1109/ISCA45697.2020.00047">IEEE DOI</a> | <a href="https://mkhairy.github.io/Docs/Accel-Sim.pdf">저자 PDF</a></p>
+    <p><strong>핵심 기여</strong>:</p>
+    <ol>
+      <li>NVBit 기반 SASS 트레이서 → ISA-independent intermediate representation으로 변환하는 <strong>trace-driven frontend</strong> (cuDNN 등 closed-source 라이브러리 시뮬레이션 최초 지원)</li>
+      <li>GPGPU-Sim 4.0: sub-warp sectored coalescer, adaptive streaming L1, IPOLY L2 hashing, HBM dual-bus, write-validate sub-sector write 정책 등 <strong>memory system 대폭 상세화</strong></li>
+      <li>38개 microbenchmark + 자동 파라미터 tuner + correlation 시각화 도구로 이루어진 <strong>validation 인프라</strong></li>
+      <li>Kepler→Turing 4세대 GPU를 단일 프레임워크로 모델링하는 <strong>multi-generation 유연성</strong> 실증</li>
+      <li>구식 베이스라인이 숨기는 두 가지 연구 기회(L1 throughput 병목 소멸, FR-FCFS 효과 극대화)를 보여주는 <strong>case study</strong></li>
+    </ol>
+    <blockquote>
+      <p><strong>핵심 통찰</strong>: 시뮬레이터가 현대 하드웨어를 충분히 정밀하게 모델링하지 못하면, 연구가 발견하는 "병목"과 "기회"가 실리콘에 존재하지 않는 허상일 수 있다.</p>
+    </blockquote>
+  </section>
+
+  <!-- 02 -->
+  <section id="s-problem" class="block">
+    <h2>문제 정의 &amp; 동기</h2>
+    <h3>왜 지금인가</h3>
+    <p>GPU 마이크로아키텍처는 제품 세대마다 undocumented 방식으로 빠르게 진화한다. Volta부터 도입된 Tensor Core, HBM, sub-core 모델, SASS ISA 변경 등은 기존 오픈소스 시뮬레이터들이 추적하지 못하는 수준의 변화다. 결과적으로 학계 연구자들은 다음 세 가지 문제에 직면한다:</p>
+    <ol>
+      <li><strong>기능적 문제</strong>: 매년 새 mISA가 등장하는데 functional model을 유지하는 비용이 너무 크다. cuDNN 같은 hand-tuned SASS 바이너리는 PTX 표현 자체가 없어 기존 simulator에서 아예 실행 불가.</li>
+      <li><strong>정확도 문제</strong>: Volta QV100에서 GPGPU-Sim 3.x는 cycle error 94%, correlation 0.87이다(논문). 이 수준의 오차는 "어떤 아이디어가 효과적인가"를 잘못 판단하게 만든다.</li>
+      <li><strong>검증 방법론 문제</strong>: 새 하드웨어 모델을 추가할 때 체계적인 validation 절차가 없어 수동 작업이 방대하다.</li>
+    </ol>
+    <h3>기존 접근의 Gap</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 1. 기존 시뮬레이터 비교 (논문 Table I 기반)</caption>
+        <thead>
+          <tr><th>시뮬레이터</th><th>ISA 지원</th><th>Volta 정확도</th><th>폐쇄 라이브러리</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GPGPU-Sim 3.x</td><td>PTX vISA + GT200 mISA</td><td>cycle MAE 94%</td><td>✗</td></tr>
+          <tr><td>Gem5-APU</td><td>AMD vISA+mISA</td><td>N/A</td><td>✗</td></tr>
+          <tr><td>MGPUSim</td><td>AMD vISA+mISA</td><td>MAE 5.5% (AMD only)</td><td>✗</td></tr>
+          <tr><td>MacSim</td><td>Intel trace-driven</td><td>N/A</td><td>✗</td></tr>
+          <tr><td>Multi2Sim</td><td>AMD/NVIDIA 구형 mISA</td><td>MAE 19%</td><td>✗</td></tr>
+          <tr><td><strong>Accel-Sim</strong></td><td><strong>NVBit-generated SASS</strong></td><td><strong>cycle MAE 15%</strong></td><td><strong>✓</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="s-idea" class="block">
+    <h2>핵심 아이디어</h2>
+    <p>NVIDIA는 binary compatibility를 위해 vISA(PTX)와 mISA(SASS)를 분리한다. 기존 시뮬레이터들은 PTX를 emulate하여 실행하는데, 이는 (1) 실제 register allocation, instruction scheduling이 반영되지 않고, (2) 매년 새 mISA의 functional model을 직접 구현해야 한다는 이중 부담을 낳는다.</p>
+    <p>Accel-Sim의 핵심 통찰은 <strong>"functional correctness는 포기하고 timing만 replay한다"</strong>는 것이다. 실제 GPU 위에서 NVBit으로 mISA 트레이스를 수집하면, 새 ISA가 나와도 functional model 없이 timing simulation이 가능하다. 대신 accuracy는 성능 모델(GPGPU-Sim 4.0)의 상세도가 결정하므로, 저자들은 memory system을 중심으로 현대 GPU 아키텍처를 역공학하여 반영한다.</p>
+  </section>
+
+  <!-- 04 -->
+  <section id="s-background" class="block">
+    <h2>배경 (필요한 것만, 압축)</h2>
+    <h3>vISA vs mISA의 구조적 차이</h3>
+    <ul>
+      <li><strong>PTX (vISA)</strong>: 가상 무한 레지스터, 추상화된 메모리 모델, nvcc가 생성하고 드라이버가 mISA로 JIT 컴파일</li>
+      <li><strong>SASS (mISA)</strong>: 실제 하드웨어 register 할당, 실제 instruction scheduling, 하드웨어마다 다른 opcode. sm_70(Volta), sm_75(Turing) 등 compute capability별로 다름</li>
+    </ul>
+    <h3>Sub-core 모델 (Volta 이후)</h3>
+    <p>Volta 이전은 SM 내 warp scheduler들이 register file과 execution unit을 공유. Volta부터 <strong>sub-core</strong> 개념 도입: warp scheduler + 전용 RF + 전용 EU의 묶음이 isolated 단위로 동작, instruction cache와 memory subsystem만 SM 전체가 공유. (논문 인용, Raihan et al. ISPASS'19에서 처음 모델링)</p>
+    <h3>Sectored Cache</h3>
+    <p>128B cache line을 32B sector 4개로 분할. tag는 128B 단위이되, 실제 data fetch는 32B 단위. 이로써 uncoalesced access에서의 over-fetch를 줄이고 CAM(content-address memory) 태그 전력 감소.</p>
+    <h3>IPOLY (Irreducible Polynomial) Hashing</h3>
+    <p>$2^n$개의 L2 bank를 가진 HBM에서 stride $2^k$ 패턴의 접근은 특정 bank로 집중된다(partition camping). Galois field 기반의 irreducible polynomial interleaving으로 $2^n$ stride에 대해 conflict-free를 보장.</p>
+  </section>
+
+  <!-- 05 -->
+  <section id="s-method" class="block">
+    <h2>제안 방법 상세</h2>
+
+    <h3>4.1 Flexible Frontend — 트레이스 생성부터 ISA-independent 표현까지</h3>
+    <pre><code>[실제 GPU 실행]
+    CUDA binary (cuDNN 포함)
+        ↓  NVBit LD_PRELOAD
+    SASS 명령별 콜백 → PC, active_mask, reg_info, 메모리 주소 수집
+        ↓  base+stride 압축
+    .trace 파일 (per-kernel, per-warp)
+        ↓  Accel-Sim frontend
+    ISA-independent intermediate representation
+        ↓
+    GPGPU-Sim 4.0 performance model</code></pre>
+
+    <p><strong>ISA-independent intermediate representation의 필드</strong> (논문 Table II):</p>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 2. ISA-independent intermediate representation 필드</caption>
+        <thead>
+          <tr><th>필드</th><th>내용</th><th>trace 모드</th><th>exec 모드</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PC</td><td>명령 주소</td><td>트레이스에서 읽음</td><td>emulation 계산</td></tr>
+          <tr><td>active_mask</td><td>warp 내 active thread 비트맵</td><td>트레이스에서 읽음</td><td>emulation 계산</td></tr>
+          <tr><td>Reg info (dst, src)</td><td>접근 레지스터 목록</td><td>ISA def 파싱</td><td>PTX 파싱</td></tr>
+          <tr><td>Exec unit</td><td>실행할 EU 종류</td><td>ISA def 파일 매핑</td><td>PTX 타입 매핑</td></tr>
+          <tr><td>Memory addresses</td><td>실제 접근 주소 배열</td><td>트레이스에서 읽음</td><td>emulation 계산</td></tr>
+          <tr><td>Memory scope</td><td>global/shared/local + cache 정책</td><td>트레이스에서 읽음</td><td>PTX 한정자</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>ISA Def 파일</strong>: 새 SASS opcode → execution unit 매핑. 공개 문서(<a href="https://docs.nvidia.com/cuda/cuda-binary-utilities/index.html">NVIDIA CUDA Binary Utilities</a>)에서 추론 가능. 새 세대 GPU 지원 시 이 파일과 HW Def 파일만 추가하면 됨.</p>
+    <p><strong>trace 파일 구조</strong>: per-kernel 디렉토리 + <code>kernelslist</code> 파일 (kernel 실행 순서, launch 파라미터). 내부는 per-warp 명령열 + 메모리 접근 주소.</p>
+    <p><strong>base+stride 압축</strong>: 메모리 접근 패턴이 규칙적인 경우 32개 주소 전체 대신 base + stride로 저장. 비규칙적 패턴은 전체 주소 저장. 압축률 약 20× (예: 2.5TB raw → 125GB compressed, CUTLASS 기준).</p>
+    <p><strong>simulation-gating</strong>: cycle-driven 방식에서 "할 일 없는 컴포넌트"는 tick을 skip. 각 컴포넌트(core, EU, cache, DRAM channel)마다 status state 유지. Trace-driven 모드에서 GPGPU-Sim 3.x 대비 4.3× 속도 향상, 12.5 KIPS (kilo warp instructions/sec) 달성.</p>
+    <p><strong>kernel-based checkpointing</strong>: 긴 initialization kernel을 skip하고 hot 커널만 시뮬레이션. trace-driven 모드에서만 가능.</p>
+
+    <h3>4.2 GPGPU-Sim 4.0 Performance Model 상세화</h3>
+
+    <h4>Sub-warp, Sectored Memory Coalescer</h4>
+    <p>Kepler는 32-thread warp 전체를 128B 단위로 coalesce. Pascal/Volta/Turing은 8-thread sub-warp 단위로 32B sector에 접근:</p>
+    <ul>
+      <li>warp 내 thread 0–7: 1st sub-warp → 최대 8개의 32B sector 요청 생성</li>
+      <li>warp 내 thread 8–15: 2nd sub-warp → 독립 처리</li>
+      <li>…</li>
+    </ul>
+    <p>이전 모델(32-thread coalescer)은 L1 read accesses를 4× 과소계산 (128B line = 4 × 32B sector인데 sector 단위로 count하는 하드웨어와 불일치). Accel-Sim은 post-coalescer access에서 NRMSE=0.00, Correl=1.00 달성.</p>
+
+    <h4>Adaptive, Streaming L1 Cache</h4>
+    <ul>
+      <li>용량: Volta 기준 shared memory와 L1D를 합산 최대 128KB. kernel이 shared memory를 사용하지 않으면 전부 L1D에 할당.</li>
+      <li>Streaming cache: MSHR 엔트리 수 대폭 증가. 할당된 L1D 용량과 무관하게 MSHR throughput 동일.</li>
+      <li>Banked (4 banks): 병렬 접근 지원</li>
+      <li>Latency: 28 cycles (Volta), GPGPU-Sim 3.x의 가정(전혀 다른 설정)과 큰 차이</li>
+    </ul>
+
+    <h4>Write-Validate Sub-sector Write Policy (논문에서 발견한 undocumented feature)</h4>
+    <p>기존 GPGPU-Sim: naive write policy → write마다 128B line 전체를 DRAM에서 fetch (per-cacheline fetch on write). 이로 인해 DRAM reads 대폭 과다 추정.</p>
+    <p>실제 L2 동작 (Accel-Sim이 역공학으로 발견):</p>
+    <pre><code>write miss → sector에 byte 기록 + byte-level write mask 설정
+                  ↓
+sector가 modified 상태로 전환 (DRAM fetch 없음)
+                  ↓
+이후 해당 sector에 read 요청 도착
+  → write_mask 완전? (모든 byte 기록됨)
+      YES → 그대로 read, DRAM 접근 없음
+      NO  → DRAM에서 sector fetch + modified bytes merge</code></pre>
+    <p>L2 write: 최소 1B 단위 (sub-32B 가능) / L2 read: 최소 32B sector 단위<br>
+    → partial write 후 read 시에만 DRAM fetch 발생. DRAM bandwidth 절약.</p>
+
+    <h4>IPOLY L2 Partition Hashing</h4>
+    <p>HBM 8-channel 구성에서 address bit[3:0] (캐시라인 내 offset)을 제외한 상위 비트 중, row bits에서 무작위 선택된 비트들을 XOR하여 L2 bank index 결정.</p>
+    <p>$$\text{bank\_idx} = \text{addr}[k:3] \oplus P(\text{addr}[\text{row\_bits}])$$</p>
+    <p>$P$는 Galois field의 irreducible polynomial. $2^n$ stride 접근에 대해 conflict-free 보장. (논문 인용: Rau ISCA'91)</p>
+
+    <h4>HBM / GDDR6 Memory Model</h4>
+    <ul>
+      <li>HBM: dual-bus interface (row command + column command 동시 발행 → bank parallelism 향상), 상세 timing, per-bank refresh</li>
+      <li>GDDR6: 기존 GDDR5 대비 read/write buffer 분리, advanced xor-based bank indexing 추가</li>
+      <li>CPU-GPU memory copy engine 모델: 모든 DRAM 접근은 L2를 통과하므로 이를 통한 copy traffic도 모델링</li>
+    </ul>
+
+    <h4>Tensor Core 모델링</h4>
+    <p>Volta: WMMA (warp-level matrix multiply accumulate) PTX → GPGPU-Sim에서 추상적으로 지원.<br>
+    Accel-Sim: SASS-level HMMA instruction 직접 시뮬레이션 (Raihan et al. ISPASS'19 분석 기반). microbenchmark로 latency/throughput 측정 후 configuration 파일에 지정.</p>
+
+    <h3>4.3 Tuner &amp; Microbenchmark Suite</h3>
+    <p>38개 microbenchmark 카테고리:</p>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 3. Microbenchmark 카테고리 및 측정 대상</caption>
+        <thead>
+          <tr><th>카테고리</th><th>측정 대상</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Latency</td><td>L1, L2, shared mem, DRAM (data type별: float/double/128b vector)</td></tr>
+          <tr><td>Bandwidth</td><td>L1, L2, shared mem, DRAM (포화 측정)</td></tr>
+          <tr><td>Cache geometry</td><td>associativity, bank 수, sector 크기, write policy</td></tr>
+          <tr><td>Coalescing</td><td>access granularity, sub-warp 크기</td></tr>
+          <tr><td>Execution unit</td><td>SPU/DPU/SFU/Tensor Core latency/throughput</td></tr>
+          <tr><td>Streaming</td><td>MSHR 수, streaming cache 동작</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Pointer-chasing 패턴으로 L1 latency 측정</strong>:</p>
+    <div class="codecard">
+      <div class="codecard__name">pointer_chase_latency.c</div>
+      <pre><code>// HW_def.h에서 L1_ARRAY_SIZE 정의 (공개 문서 기반)
+for (i = 0; i &lt; L1_ARRAY_SIZE-1; i++)
+    data[i] = (uint64_t)(data + i + 1);  // 포인터 체인 구성
+
+// 타이밍 루프: ld.global.ca (L1 cached)로 ITERS=32768회 pointer-chase
+asm volatile ("ld.global.ca.u64 ptr1, [ptr0];");</code></pre>
+    </div>
+    <p>→ 컴파일된 SASS: <code>LDG.E.64 R12, [R10]</code> 연속 의존성 체인, latency = (stopClk − startClk) / ITERS</p>
+    <p>자동 tuner가 결정하지 못하는 4가지 파라미터(warp scheduling, memory scheduling, L2 interleaving granularity, L2 hash function)는 bandwidth microbenchmark 조합 시뮬레이션으로 최고 상관계수를 주는 조합 선택.</p>
+
+    <h3>4.4 Correlator</h3>
+    <ul>
+      <li>nvprof / nsight-cli로 수집한 hardware counter를 시뮬레이터 counter와 1:1 비교</li>
+      <li>자동 correlation plot 생성 (scatter plot, x=HW, y=Sim)</li>
+      <li>수치: Correl (Karl Pearson 변동계수 = σ/μ), MAE (cycle/instruction/IPC), NRMSE (나머지 counter)</li>
+    </ul>
+  </section>
+
+  <!-- 06 -->
+  <section id="s-system" class="block">
+    <h2>시스템 · HW 측면</h2>
+
+    <h3>5.1 HW vs SW 분담</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 4. 구성요소별 역할 분담</caption>
+        <thead>
+          <tr><th>구성요소</th><th>역할</th><th>비고</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>실제 GPU (NVBit)</td><td>트레이스 생성 (functional ground truth)</td><td>1회 실행, 결과를 파일로 저장</td></tr>
+          <tr><td>ISA Def 파일</td><td>opcode → EU 매핑</td><td>사용자가 공개 문서로 작성</td></tr>
+          <tr><td>HW Def 파일</td><td>SM 수, warp 크기 등 기초 파라미터</td><td>공개 사양서에서 추출</td></tr>
+          <tr><td>Accel-Sim Tuner</td><td>microbenchmark 결과 → config 자동 생성</td><td>SW</td></tr>
+          <tr><td>GPGPU-Sim 4.0</td><td>cycle-accurate timing simulation</td><td>SW, 싱글스레드</td></tr>
+          <tr><td>Correlator</td><td>HW counter ↔ sim counter 비교</td><td>SW, 사람이 해석</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>5.2 Simulation 환경</h3>
+    <ul>
+      <li><strong>Simulation 방식</strong>: cycle-driven (매 cycle 모든 컴포넌트 tick), simulation-gating으로 idle 컴포넌트 skip</li>
+      <li><strong>RTL/합성</strong>: 없음. 순수 SW performance model</li>
+      <li><strong>Simulator 속도</strong>: trace-driven 12.5 KIPS, exec-driven 6 KIPS (논문 Table I)</li>
+      <li><strong>멀티스레딩</strong>: 미지원. 싱글스레드 (논문 Table I)</li>
+      <li><strong>참고</strong>: 후속 연구(외부, arXiv 2502.14691)에서 병렬화 시도 — 하지만 단순 병렬화 시 determinism 문제 존재</li>
+    </ul>
+
+    <h3>5.3 트레이스 물리적 특성</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 5. 벤치마크별 트레이스 크기</caption>
+        <thead>
+          <tr><th>벤치마크</th><th class="num">비압축 크기</th><th class="num">압축 후</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Rodinia 3.1 (13개)</td><td class="num">302 GB</td><td class="num">15 GB</td></tr>
+          <tr><td>CUDA SDK (10개)</td><td class="num">18 GB</td><td class="num">1.2 GB</td></tr>
+          <tr><td>Parboil (8개)</td><td class="num">250 GB</td><td class="num">12 GB</td></tr>
+          <tr><td>Polybench (10개)</td><td class="num">743 GB</td><td class="num">33 GB</td></tr>
+          <tr><td>CUTLASS (20개 입력)</td><td class="num">2.5 TB</td><td class="num">125 GB</td></tr>
+          <tr><td>Deepbench (60개)</td><td class="num">2.6 TB</td><td class="num">130 GB</td></tr>
+          <tr><td><strong>합계</strong></td><td class="num"><strong>~6.2 TB</strong></td><td class="num"><strong>~317 GB</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>트레이스 생성 시간: 1개 GPU로 약 48시간 (논문). 각 GPU generation별로 별도 생성 필요 (sm_70 traces를 Turing sm_75에 재사용 — NVBit Turing 지원이 2020년 여름 예정이었기 때문).</p>
+  </section>
+
+  <!-- 07 -->
+  <section id="s-experiment" class="block">
+    <h2>실험 셋업 &amp; 재현 관점</h2>
+
+    <h3>6.1 검증 대상 GPU</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 6. 검증 대상 GPU 목록</caption>
+        <thead>
+          <tr><th>GPU</th><th>Architecture</th><th>sm</th><th>DRAM</th><th class="num">#SM</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>NVIDIA GeForce GTX TITAN</td><td>Kepler</td><td>sm_35</td><td>GDDR5</td><td class="num">14</td></tr>
+          <tr><td>NVIDIA TITAN X</td><td>Pascal</td><td>sm_62</td><td>GDDR5</td><td class="num">28</td></tr>
+          <tr><td>NVIDIA Quadro V100</td><td>Volta</td><td>sm_70</td><td>HBM2</td><td class="num">80</td></tr>
+          <tr><td>NVIDIA RTX 2060</td><td>Turing</td><td>sm_75</td><td>GDDR6</td><td class="num">30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>주요 비교는 <strong>Volta QV100 (80 SM)</strong> 기준.</p>
+
+    <h3>6.2 Baselines</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 7. 비교 베이스라인</caption>
+        <thead>
+          <tr><th>베이스라인</th><th>정체</th><th>설정 방법</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>GPGPU-Sim 3.x</strong></td><td>기존 PTX execution-driven 시뮬레이터</td><td>Fermi 구조를 Volta 스펙으로 scaling (SM 수, 메모리 BW 등 단순 조정)</td></tr>
+          <tr><td><strong>Accel-Sim [PTX Mode]</strong></td><td>동일 GPGPU-Sim 4.0 perf model, PTX 실행</td><td>Accel-Sim과 ISA만 다른 ablation</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>(분석) GPGPU-Sim 3.x는 "best-effort Volta" 설정 — Fermi 시대의 구조로 SM 수 등만 맞춘 것으로, memory system 상세도는 유지되지 않음. 논문 Table VI가 정확한 diff를 보여준다.</p>
+
+    <h3>6.3 워크로드</h3>
+    <ul>
+      <li><strong>80개 workload (1,945 kernel instances)</strong>: GPGPU-Sim과 동시 실행 가능한 vISA+mISA 공통 워크로드</li>
+      <li><strong>60개 Deepbench workload (11,440 kernel instances)</strong>: Accel-Sim 단독. cuDNN/cuBLAS hand-tuned SASS 포함</li>
+    </ul>
+    <p>CUDA 10 컴파일, input size는 각 benchmark suite 기본값. Deepbench는 학습 10개 + 추론 10개 입력. Hardware counter는 nvprof/nsight-cli로 per-kernel 기준 다회 실행 평균.</p>
+
+    <h3>6.4 메트릭 정의</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 8. 평가 메트릭 정의</caption>
+        <thead>
+          <tr><th>메트릭</th><th>적용 대상</th><th>정의</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MAE</td><td>cycles, instructions, IPC</td><td>$\frac{1}{N}\sum \left|\frac{\hat{y}-y}{y}\right|$ × 100%</td></tr>
+          <tr><td>NRMSE</td><td>나머지 counter</td><td>$\frac{\sqrt{\frac{1}{N}\sum(\hat{y}-y)^2}}{\bar{y}}$</td></tr>
+          <tr><td>Correl</td><td>모든 counter</td><td>Karl Pearson coefficient of variation (σ/μ), HW vs Sim 비교용</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>MAE는 참값이 0인 경우 분모가 0이 되어 대형 오류처럼 보이는 문제 있음 → 해당 counter에는 NRMSE 사용. IPC는 machine instruction count를 분자로 통일 (PTX/SASS ISA 중립).</p>
+
+    <h3>6.5 Ablation 구성</h3>
+    <p>논문이 수행하는 ablation은 두 축:</p>
+    <ol>
+      <li><strong>Frontend 효과</strong>: GPGPU-Sim 3.x (PTX+구 perf model) vs Accel-Sim [PTX Mode] (PTX+새 perf model) vs Accel-Sim (SASS+새 perf model)</li>
+      <li><strong>Memory system 단계별 효과</strong>: Figure 4 counter별 분해 (L1 req, L1 hit, L2 reads, L2 hits, DRAM reads, IPC, occupancy)</li>
+    </ol>
+    <p>개별 memory feature별 ablation (예: IPOLY만 끄면 얼마나 나빠지는가)은 <strong>논문에 없음</strong>.</p>
+
+    <h3>6.6 재현 체크리스트</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 9. 재현 가능성 체크리스트</caption>
+        <thead>
+          <tr><th>항목</th><th>상태</th><th>비고</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>코드 공개</td><td>✅</td><td><a href="https://github.com/accel-sim/accel-sim-framework">github.com/accel-sim</a></td></tr>
+          <tr><td>Trace 공개</td><td>⚠️</td><td>일부 공개, 전체 6.2 TB는 별도 다운로드</td></tr>
+          <tr><td>Hardware counter 수집 스크립트</td><td>✅ (논문 언급)</td><td>nvprof/nsight-cli</td></tr>
+          <tr><td>Configuration 파일</td><td>✅</td><td>GitHub에 포함</td></tr>
+          <tr><td>Deepbench 트레이스</td><td>⚠️</td><td>cuDNN 버전 고정 필요</td></tr>
+          <tr><td>CUDA 버전</td><td>✅</td><td>CUDA 10 명시</td></tr>
+          <tr><td>Turing 트레이스</td><td>⚠️</td><td>Volta(sm_70) 트레이스를 Turing(sm_75)에 재사용, NVBit Turing 미지원</td></tr>
+          <tr><td>검증 GPU 접근</td><td>❌</td><td>QV100, TITAN X 등 특정 카드 필요</td></tr>
+          <tr><td>개별 feature ablation</td><td>❌ 논문에 없음</td><td>IPOLY, write policy, sector cache 각각의 기여 분해 없음</td></tr>
+          <tr><td>warp/memory 스케줄러 exact 정책</td><td>❌ 논문에 없음</td><td>"hardware correlation이 가장 높은 조합" 선택이지만 상세 미공개</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="s-results" class="block">
+    <h2>결과 분석</h2>
+
+    <h3>7.1 전체 cycle 정확도 (Volta QV100 기준)</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 10. 시뮬레이터별 전체 cycle 정확도</caption>
+        <thead>
+          <tr><th>시뮬레이터</th><th class="num">MAE (cycles)</th><th class="num">Correl</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GPGPU-Sim 3.x</td><td class="num">94%</td><td class="num">0.87</td></tr>
+          <tr><td>Accel-Sim [PTX Mode]</td><td class="num">34%</td><td class="num">0.98</td></tr>
+          <tr><td><strong>Accel-Sim (SASS)</strong></td><td class="num"><strong>15%</strong></td><td class="num"><strong>1.00</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>PTX Mode → SASS로의 전환만으로 MAE 34% → 15% (약 2×). 나머지 절반의 개선은 perf model 업데이트.</p>
+
+    <h3>7.2 Counter별 상세 비교 (Volta, 논문 Table VII)</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 11. Counter별 GPGPU-Sim 3.x vs Accel-Sim 비교</caption>
+        <thead>
+          <tr><th>Counter</th><th>GPGPU-Sim 3.x</th><th>Accel-Sim</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Instructions</td><td>MAE=27%, Correl=0.87</td><td>MAE=1%, Correl=1.00</td></tr>
+          <tr><td>Execution Cycles</td><td>MAE=94%, Correl=0.87</td><td>MAE=15%, Correl=1.00</td></tr>
+          <tr><td>L1 Reqs (post-coalescer)</td><td>NRMSE=3.04, Correl=0.99</td><td>NRMSE=0.00, Correl=1.00</td></tr>
+          <tr><td>L1 Hit Ratio</td><td>NRMSE=1.04, Correl=0.69</td><td>NRMSE=0.76, Correl=0.87</td></tr>
+          <tr><td>L2 Reads</td><td>NRMSE=2.67, Correl=0.95</td><td>NRMSE=0.03, Correl=1.00</td></tr>
+          <tr><td>L2 Read Hits</td><td>NRMSE=3.24, Correl=0.82</td><td>NRMSE=0.47, Correl=0.99</td></tr>
+          <tr><td>DRAM Reads</td><td>NRMSE=5.69, Correl=0.89</td><td>NRMSE=0.92, Correl=0.96</td></tr>
+          <tr><td>Occupancy</td><td>NRMSE=0.12, Correl=0.99</td><td>NRMSE=0.13, Correl=0.99</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>주목할 점</strong>: L1 Reqs에서 NRMSE 3.04→0.00 — sub-warp coalescer + sectoring으로 access count가 정확히 맞아떨어진 것. L1 Hit Ratio는 여전히 0.87에 그침 — profiler가 sector miss를 line tag hit으로 계산하는 것이 원인.</p>
+
+    <h3>7.3 이득이 어디서 오는가 (분해)</h3>
+    <pre><code>GPGPU-Sim 3.x (94% error)
+    ↓ perf model 업데이트만
+Accel-Sim [PTX Mode] (34% error)  → perf model이 약 60%p 기여
+    ↓ SASS frontend 추가
+Accel-Sim (15% error)              → SASS ISA가 추가 약 19%p 기여</code></pre>
+    <p><strong>SASS의 기여가 큰 워크로드</strong>: CUTLASS sgemm (MAE 98%→2%), Rodinia bfs, dwt2d, hotspot. 이들은 instruction scheduling이 ILP에 결정적.</p>
+    <p><strong>perf model의 기여가 큰 워크로드</strong>: Polybench (atax, bicg, gesummv, mvt, syrk — GPGPU-Sim 최대 1700% → Accel-Sim 23%). 이들은 L1 cache capacity sensitivity가 높은데 GPGPU-Sim은 32KB L1 고정인 반면 Accel-Sim은 128KB adaptive L1 사용.</p>
+    <p><strong>예외</strong>: CUTLASS gemm-wmma에서는 Accel-Sim [PTX Mode]가 MAE≈0.5%로 가장 정확. 추상적 WMMA PTX가 우연히 cycle-accurate에 가까운 것. SASS HMMA 모델이 일부 입력 크기에서 덜 정확.</p>
+
+    <h3>7.4 Bandwidth 달성률 (Volta, Figure 7)</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 12. 이론 BW 대비 달성률 비교</caption>
+        <thead>
+          <tr><th>수준</th><th>HW</th><th>Accel-Sim</th><th>GPGPU-Sim</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>L1 BW</strong></td><td>~95%</td><td>85%</td><td>33%</td></tr>
+          <tr><td><strong>L2 BW</strong></td><td>~95%</td><td>~73%</td><td>~50%</td></tr>
+          <tr><td><strong>Mem BW</strong></td><td>85%</td><td>82%</td><td>62%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>L2 BW 22% 잔여 오차: IPOLY hashing이 정확한 하드웨어 hash function을 완벽히 모방하지 못함(논문 인정).</p>
+
+    <h3>7.5 Deepbench 결과 (Figure 6)</h3>
+    <p>Accel-Sim만 시뮬레이션 가능. Correl=0.95, MAE=33%. 오차가 높은 이유: texture memory, local load 모델링 미흡(논문 명시). RNN workload의 낮은 occupancy는 실리콘 GPU 연구와 일치.</p>
+
+    <h3>7.6 Case Studies</h3>
+    <p><strong>Case Study 1: L1 Cache Throughput 병목</strong></p>
+    <p>GPGPU-Sim: srad-v1, sc, mm 등에서 L1 reservation fails (MSHR_RESERV_FAIL + LINE_ALLOC_FAIL + QUEUE_FULL) 수백~1000/kilo-cycles.<br>
+    Accel-Sim: 동일 워크로드에서 reservation fails ≈ 0.</p>
+    <p>→ L1 throughput 병목을 해결하려는 기존 논문들(cache bypassing, warp throttling)의 전제가 현대 GPU에서 성립하지 않음. Volta의 streaming + banked + adaptive L1이 이미 병목을 해소했기 때문.</p>
+
+    <p><strong>Case Study 2: FR-FCFS Memory Scheduling</strong></p>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 13. FR-FCFS vs FCFS 성능 향상 비교</caption>
+        <thead>
+          <tr><th></th><th class="num">GPGPU-Sim</th><th class="num">Accel-Sim</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FR-FCFS vs FCFS 성능 향상</td><td class="num">평균 20%</td><td class="num"><strong>평균 2.5×</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>GPGPU-Sim에서는 FR-FCFS가 일부 워크로드에서 효과 없음. Accel-Sim에서는 훨씬 더 큰 개선. 이유: 더 정확한 coalescing + L2 hashing + write policy가 page locality를 더 많이 깨뜨리고, 이를 FR-FCFS가 회복하는 여지가 커진다. HBM의 dual-bus, pseudo-independent access, per-bank refresh와의 상호작용이 memory scheduling을 더 critical하게 만듦.</p>
+  </section>
+
+  <!-- 09 -->
+  <section id="s-critique" class="block">
+    <h2>비판적 분석</h2>
+
+    <h3>강점</h3>
+    <ul>
+      <li>(분석) 트레이스의 ISA-independent 변환 설계가 깔끔하다. performance model과 frontend가 완전히 분리되어 있어, 새 GPU 지원 시 frontend(ISA def + HW def) 교체만으로 기존 perf model 재사용.</li>
+      <li>(분석) counter-by-counter validation 방법론이 체계적이다. "cycle이 맞는다"가 아니라 L1 req → L1 hit → L2 read → DRAM read 계층적으로 각 counter가 맞아야 전체가 맞는 접근.</li>
+      <li>(분석) microbenchmark 기반 자동 tuning이 사람이 직접 수행하던 하드웨어 역공학의 상당 부분을 자동화.</li>
+    </ul>
+
+    <h3>한계</h3>
+
+    <h4>① trace-driven의 근본적 제약 (사용자의 추가 사항과 직결)</h4>
+    <p>(분석) 트레이스는 특정 입력에서의 실행 경로를 고정(freeze)한다. 따라서:</p>
+    <ul>
+      <li><strong>data-dependent control flow</strong>: 입력이 바뀌면 다른 branch가 탐색됨 → 트레이스 무효화</li>
+      <li><strong>data-dependent memory address</strong>: 입력이 바뀌면 메모리 접근 패턴 변화 → 트레이스의 주소 배열 전체가 달라짐</li>
+      <li><strong>global synchronization, atomic</strong>: 실행 결과에 따라 다음 커널 동작이 달라지는 경우 → 트레이스 재생이 부정확</li>
+    </ul>
+    <blockquote>
+      <p>논문 자체도 이를 인정: "Evaluating new designs that rely on the data values stored in registers or memory and global synchronization mechanisms are either not possible or very difficult to study without emulation-based execution-driven simulation." (논문 §I)</p>
+    </blockquote>
+
+    <h4>② Markov 예측 기반 라우팅과의 충돌 (사용자 연구 맥락)</h4>
+    <p>(분석) 사용자의 data-dependent head routing (Markov 예측)은 본질적으로 trace-driven 시뮬레이션과 충돌한다. Markov 예측의 정확도는 과거 routing 결과에 따라 달라지고, routing 결정이 어떤 메모리/compute가 활성화되는지를 결정한다. 이 feedback loop는 트레이스에 포착되어 있지 않다.</p>
+    <p>구체적 문제:</p>
+    <ul>
+      <li>트레이스에 기록된 active_mask와 메모리 주소는 Markov 예측이 "정확했을 때"의 경로를 반영</li>
+      <li>예측 오류(misprediction) 패널티, 올바른/틀린 head 로드에 따른 분기가 트레이스에 없음</li>
+      <li>따라서 Accel-Sim trace-driven 모드로는 "예측 정확도가 X%일 때 실제 cycle이 얼마인가"를 측정할 수 없음</li>
+    </ul>
+    <p>→ <strong>가능한 접근</strong>: execution-driven PTX 모드 사용 + Markov 예측 로직을 PTX emulator에 삽입. 또는 여러 시나리오(완벽 예측 / 완전 실패)에 대해 별도 트레이스를 생성하여 bound를 측정.</p>
+
+    <h4>③ 모델링 누락 항목</h4>
+    <ul>
+      <li>texture memory, local load 상세 모델링 미완 (Deepbench 33% error 원인으로 논문 자체 지적)</li>
+      <li>L2 hashing 함수 미완 (22% L2 BW 오차 잔존)</li>
+      <li>warp scheduling 정확한 정책: microbenchmark로 결정하지 못하고 bandwidth 상관 최고 조합 선택 → 실제 HW 정책과 다를 가능성</li>
+      <li>Turing 트레이스를 Volta trace로 대체 (NVBit Turing 미지원)</li>
+    </ul>
+
+    <h4>④ 멀티스레딩 미지원</h4>
+    <p>12.5 KIPS (trace-driven) 속도는 대규모 LLM inference 커널에서 심각한 병목. Deepbench 60개 workload (11,440 kernel instances) 시뮬레이션에 논문 기준 수 주 수준 예상. (외부: arXiv 2502.14691에서 병렬화 시도, determinism 문제 언급)</p>
+
+    <h4>⑤ 개별 feature 기여 분해 ablation 없음</h4>
+    <p>sub-warp coalescer, adaptive L1, IPOLY hashing, write-validate policy 각각이 cycle accuracy에 얼마나 기여하는지 분해 실험이 없다. PTX Mode → SASS Mode로의 전환이 "나머지"를 모두 설명한다고 가정하는 구조.</p>
+  </section>
+
+  <!-- 10 -->
+  <section id="s-related" class="block">
+    <h2>관련 연구 맥락 (웹조사)</h2>
+
+    <h3>9.1 선행 연구 lineage</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 14. 선행 연구 계보</caption>
+        <thead>
+          <tr><th>논문</th><th>역할</th><th>관계</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GPGPU-Sim (Bakhoda et al., ISPASS'09)</td><td>기반 simulator</td><td>Accel-Sim이 GPGPU-Sim 4.0으로 확장</td></tr>
+          <tr><td>Jain et al. SIGMETRICS'18 (외부)</td><td>"GPGPU-Sim은 Pascal에서 부정확하다" 실증</td><td>Accel-Sim의 motivation paper</td></tr>
+          <tr><td>Raihan et al. ISPASS'19 (외부)</td><td>Volta sub-core, HMMA Tensor Core 모델링</td><td>Accel-Sim이 직접 채용</td></tr>
+          <tr><td>NVBit (Villa et al., MICRO'19) (외부)</td><td>GPU dynamic binary instrumentation</td><td>Accel-Sim tracer의 기반</td></tr>
+          <tr><td>Jia et al. arXiv'18 (외부)</td><td>Volta 마이크로벤치마크로 역공학</td><td>Accel-Sim이 microbenchmark 설계에 참고</td></tr>
+          <tr><td>Rau ISCA'91 (외부)</td><td>IPOLY pseudo-random memory interleaving</td><td>L2 hashing 직접 인용</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>9.2 동시기·후속 연구</h3>
+    <ul>
+      <li>(외부) <strong>AccelWattch (MICRO'21)</strong>: Accel-Sim 기반에 전력 모델 추가, Volta QV100 validated. GPGPU-Sim 4.2.0에 통합.</li>
+      <li>(외부) <strong>"Analyzing and Improving Hardware Modeling of Accel-Sim" (arXiv'24)</strong>: instruction cache 모델링 오류(branch 무관 PC packing), control flow 명령어 dependency 누락 등 구체적 버그 지적 및 수정.</li>
+      <li>(외부) <strong>GainSight (arXiv'25)</strong>: Accel-Sim을 백엔드로 활용하여 H100 메모리 접근 패턴 프로파일링. Accel-Sim 1.3.0 + GPGPU-Sim v4.2.1 사용.</li>
+    </ul>
+
+    <h3>9.3 Novelty 평가</h3>
+    <p>(분석) 논문이 "최초"라고 주장하는 항목:</p>
+    <ul>
+      <li>NVIDIA SASS 시뮬레이션 가능한 오픈소스 framework: <strong>실질적으로 최초</strong> (동시기 경쟁자 없음)</li>
+      <li>cuDNN/cuBLAS 시뮬레이션: <strong>최초</strong> (다른 시뮬레이터는 PTX fallback 없이 불가)</li>
+      <li>4세대 NVIDIA GPU validated 오픈소스: <strong>최초</strong></li>
+    </ul>
+    <p>sub-warp sectored coalescer, L1 streaming cache 등의 발견은 Raihan et al.'19, Jia et al.'18 등의 역공학 작업 위에 서 있으나, 이를 통합된 validated 시뮬레이터로 구현한 것은 Accel-Sim이 처음.</p>
+  </section>
+
+  <!-- 11 -->
+  <section id="s-myresearch" class="block">
+    <h2>내 연구와의 연결점 · 적용 가능성</h2>
+
+    <h3>10.1 빌려올 수 있는 아이디어/기법</h3>
+
+    <h4>① Validation 방법론 — counter-by-counter 계층적 검증</h4>
+    <p>메모리 hierarchy를 L1 req → L1 hit → L2 reads → DRAM reads 순서로 각 계층 counter를 독립 검증하는 접근. 내 offloading/prefetch 실험에서도 동일 패턴 적용 가능:</p>
+    <ul>
+      <li>prefetch hit rate (L1/L2에서의 early arrival)</li>
+      <li>offloading 시 DRAM 접근 패턴 변화</li>
+      <li>memory bandwidth 활용률</li>
+    </ul>
+
+    <h4>② Microbenchmark 기반 Latency/Bandwidth 측정</h4>
+    <p>pointer-chasing으로 각 memory level의 정확한 latency를 측정하는 패턴은 내 prefetch window size 결정, offloading overhead 측정에 직접 활용 가능.</p>
+
+    <h4>③ IPOLY hashing이 L2 BW에 미치는 영향</h4>
+    <p>MoE/MoH offloading에서 expert weight를 DRAM에서 L2를 통해 로드할 때, access pattern이 $2^k$ stride를 가질 경우 partition camping이 심각해질 수 있음. IPOLY 설정을 활성화하고 Accel-Sim으로 캠핑 완화 효과를 정량화하는 것이 유효.</p>
+
+    <h4>④ Simulation-gating</h4>
+    <p>내가 직접 simulator를 수정할 경우, "active 컴포넌트만 tick"하는 simulation-gating 패턴은 prefetch/offloading 관련 idle period가 많을 때 속도 향상에 유용.</p>
+
+    <h3>10.2 비교 baseline으로 활용</h3>
+    <p>Accel-Sim (GPGPU-Sim 4.0, Volta QV100 config)은 이미 공개·validated. 내 연구의 contribution을 검증하기 위한 cycle-accurate baseline으로 가장 적합한 오픈소스 선택지.</p>
+    <ul>
+      <li>prefetch 없는 순수 demand-fetch 시나리오의 baseline cycle/memory traffic</li>
+      <li>DRAM bandwidth saturation 하에서 FR-FCFS 등 스케줄링 정책의 baseline 효과</li>
+    </ul>
+
+    <h3>10.3 Trace-driven vs Execution-driven: 나의 사용 전략</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 15. 시나리오별 권장 시뮬레이션 모드</caption>
+        <thead>
+          <tr><th>시나리오</th><th>권장 모드</th><th>이유</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MoE/MoH expert weight 단순 offload 측정</td><td><strong>trace-driven</strong></td><td>routing이 고정된 경우, 트레이스가 정확하게 재현</td></tr>
+          <tr><td>Markov 예측 기반 dynamic routing 성능</td><td><strong>execution-driven PTX</strong></td><td>routing 결과가 다음 메모리 패턴을 결정 → 고정 트레이스 불가</td></tr>
+          <tr><td>KV cache prefetch 효과 측정</td><td><strong>trace-driven + multiple traces</strong></td><td>서로 다른 prefetch 타이밍 시나리오를 별도 트레이스로 표현</td></tr>
+          <tr><td>INT4 quantized head prediction의 오류 영향</td><td><strong>execution-driven PTX</strong></td><td>예측 오류가 control flow를 바꿀 수 있음</td></tr>
+          <tr><td>prefetch overhead만 측정 (routing 고정)</td><td><strong>trace-driven</strong></td><td>baseline 대비 DRAM 접근 감소 정량화 가능</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p><strong>핵심 결론</strong>: data-dependent Markov routing은 trace-driven Accel-Sim과 근본적으로 충돌한다. 이 기능을 시뮬레이션하려면 execution-driven PTX 모드에서 Markov 예측 로직을 직접 삽입하거나, 예측 정확도 구간(0%, 50%, 100%)에 따른 multiple trace sets를 생성하여 interpolation하는 간접 접근이 필요하다.</p>
+    </blockquote>
+
+    <h3>10.4 출력 통계 카운터 — 내 평가 지표 후보</h3>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 16. Accel-Sim 카운터와 내 실험에서의 의미</caption>
+        <thead>
+          <tr><th>Accel-Sim 카운터</th><th>내 실험에서의 의미</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>L2 Reads (NRMSE)</td><td>expert weight offloading 시 L2 traffic 변화</td></tr>
+          <tr><td>DRAM Reads (NRMSE)</td><td>prefetch hit/miss에 따른 DRAM bandwidth 변화</td></tr>
+          <tr><td>L1 Hit Rate</td><td>KV cache가 L1에 얼마나 머무는지</td></tr>
+          <tr><td>L2 Read Hits</td><td>prefetch가 L2에 제때 도착했는지</td></tr>
+          <tr><td>Execution Cycles (MAE)</td><td>전체 inference latency 변화</td></tr>
+          <tr><td>IPC</td><td>compute utilization (memory stall 비율 역산 가능)</td></tr>
+          <tr><td>MSHR 상태</td><td>prefetch inflight request 수, backpressure 측정</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>10.5 충돌하거나 재검토가 필요한 가정</h3>
+    <ul>
+      <li>(분석) Accel-Sim의 L2 BW가 22% 과소 추정됨 → L2 BW가 bottleneck이 되는 시나리오에서 DRAM offloading 효과가 실제보다 작게 나올 위험. 실제 HW 실험으로 검증 필요.</li>
+      <li>(분석) texture memory 모델링 미완 → cuDNN 기반 attention kernel 시뮬레이션 시 오차 증가 가능.</li>
+      <li>(분석) Turing trace를 Volta trace로 대체한 경우 — RTX 계열 GPU에서 실험 시 ISA 차이 무시.</li>
+    </ul>
+  </section>
+
+  <!-- 12 -->
+  <section id="s-terms" class="block">
+    <h2>핵심 용어 정리</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <caption>표 17. 주요 용어 정의</caption>
+        <thead>
+          <tr><th>용어</th><th>정의</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>vISA (virtual ISA)</td><td>PTX: NVIDIA의 추상 ISA. 컴파일러가 생성, 드라이버가 mISA로 JIT 컴파일.</td></tr>
+          <tr><td>mISA (machine ISA)</td><td>SASS: 특정 GPU 세대의 실제 하드웨어 명령어. sm_70=Volta, sm_75=Turing 등.</td></tr>
+          <tr><td>NVBit</td><td>NVIDIA의 dynamic binary instrumentation framework. SASS 레벨에서 동작, LD_PRELOAD 방식.</td></tr>
+          <tr><td>SASS</td><td>Shader ASSembly. NVIDIA GPU의 mISA.</td></tr>
+          <tr><td>sub-core</td><td>Volta 이후 SM의 기본 단위: warp scheduler + 전용 RF + 전용 EU.</td></tr>
+          <tr><td>sectored cache</td><td>128B cache line을 32B sector 4개로 분할. tag는 128B, data fetch는 32B 단위.</td></tr>
+          <tr><td>partition camping</td><td>$2^n$ 메모리 bank에서 $2^k$ stride 접근이 특정 bank에 집중되는 현상.</td></tr>
+          <tr><td>IPOLY hashing</td><td>Galois field irreducible polynomial 기반 L2 bank index 생성. camping 완화.</td></tr>
+          <tr><td>write-validate</td><td>write miss 시 DRAM fetch 없이 sector에 기록 후 byte-level mask로 유효성 추적.</td></tr>
+          <tr><td>MSHR</td><td>Miss Status Holding Register. in-flight cache miss 추적 구조.</td></tr>
+          <tr><td>simulation-gating</td><td>할 일 없는 컴포넌트의 cycle tick을 skip하는 속도 최적화.</td></tr>
+          <tr><td>FR-FCFS</td><td>First-Row First-Come First-Serve. row-buffer hit를 우선 처리하는 DRAM 스케줄러.</td></tr>
+          <tr><td>active mask</td><td>warp 내 현재 cycle에 active한 thread 비트맵 (32bit).</td></tr>
+          <tr><td>ISA Def 파일</td><td>SASS opcode → execution unit 매핑 파일. 사용자가 공개 문서로 작성.</td></tr>
+          <tr><td>HW Def 파일</td><td>SM 수, warp 크기 등 기초 HW 파라미터 정의 파일. microbenchmark가 참조.</td></tr>
+          <tr><td>MAE</td><td>Mean Absolute Error. $\frac{1}{N}\sum|\hat{y}-y|/y \times 100\%$.</td></tr>
+          <tr><td>NRMSE</td><td>Normalized RMSE. 참값이 0인 counter에 사용.</td></tr>
+          <tr><td>Correl</td><td>Karl Pearson coefficient of variation (σ/μ). HW vs Sim 추세 일치도.</td></tr>
+          <tr><td>kernelslist</td><td>Accel-Sim trace 디렉토리의 kernel 실행 순서 메타파일.</td></tr>
+          <tr><td>base+stride compression</td><td>규칙적 메모리 접근 패턴을 (base, stride) 쌍으로 압축.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section id="s-open" class="block block--callout block--open">
+    <h2><span class="tag">Open</span>미해결 질문 / 더 읽을 것</h2>
+
+    <h3>Accel-Sim이 남긴 open questions</h3>
+    <ol>
+      <li>L2 bandwidth의 22% 잔여 오차 — 실제 HW hash function 완전 역공학 필요</li>
+      <li>warp scheduling / replacement policy의 정확한 모델 — hit rate correlation 개선 필요</li>
+      <li>texture memory / local load 상세 모델링 — Deepbench 33% 오차 해소</li>
+      <li>Turing NVBit 지원 이후 sm_75 전용 트레이스로의 재검증</li>
+      <li>multithreaded simulation 가능성과 determinism 보장 방법</li>
+    </ol>
+
+    <h3>더 읽을 논문</h3>
+    <ul>
+      <li><strong>Raihan et al., "Modeling Deep Learning Accelerator Enabled GPUs," ISPASS'19</strong> — sub-core 모델, HMMA Tensor Core 분석의 원천 <a href="https://ieeexplore.ieee.org/document/8695671">[링크]</a></li>
+      <li><strong>Jain et al., "A Quantitative Evaluation of Contemporary GPU Simulation Methodology," SIGMETRICS'18</strong> — GPGPU-Sim Pascal 검증 문제 실증, Accel-Sim motivation <a href="https://arxiv.org/abs/1710.03090">[arXiv]</a></li>
+      <li><strong>Villa et al., "NVBit: A Dynamic Binary Instrumentation Framework for NVIDIA GPUs," MICRO'19</strong> — Accel-Sim tracer의 기반 <a href="https://dl.acm.org/doi/10.1145/3352460.3358307">[ACM DL]</a></li>
+      <li><strong>Jia et al., "Dissecting the NVIDIA Volta GPU Architecture via Microbenchmarking," arXiv'18</strong> — Volta L1/L2 역공학 <a href="https://arxiv.org/abs/1804.06826">[arXiv]</a></li>
+      <li><strong>Khairy et al., "A Detailed Model for Contemporary GPU Memory Systems," ISPASS'19</strong> — Accel-Sim ISCA'20의 직전 워크샵 버전, memory system 변경 사항만 집중 <a href="https://mkhairy.github.io/Docs/ispass2019.pdf">[저자 PDF]</a></li>
+      <li><strong>Huerta et al., "Analyzing and Improving Hardware Modeling of Accel-Sim," arXiv'24</strong> — Accel-Sim의 instruction cache, control flow 모델링 버그 분석·수정 <a href="https://arxiv.org/abs/2401.10082">[arXiv]</a></li>
+      <li><strong>AccelWattch (MICRO'21)</strong> — Accel-Sim에 전력 모델 추가 <a href="https://github.com/accel-sim/accel-sim-framework">[accel-sim GitHub]</a></li>
+    </ul>
+  </section>
+
+  <footer class="doc-footer">
+    <span>Junon · 주간 연구 미팅 노트</span>
+    <span>논문: ISCA 2020 · Khairy et al.</span>
+  </footer>
+
+</article>
+
+<!-- 수식 자동 렌더 (md에 수식이 없어도 그냥 둬도 무해) -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false}
+  ],throwOnError:false});"></script>
+</body>
+</html>
