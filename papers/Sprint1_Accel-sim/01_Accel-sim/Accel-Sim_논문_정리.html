@@ -290,8 +290,8 @@
     a{text-decoration:none;color:inherit}
   }
 </style>
-
 </head>
+
 <body>
 <div class="page">
 
@@ -299,13 +299,13 @@
   <section class="hero">
     <div class="hero-main">
       <div class="eyebrow">Weekly Research Brief · 2026-W25</div>
-      <h1 style="font-size:36px;line-height:1.15">Accel-Sim 논문 정리</h1>
-      <p class="subtitle">Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling를 읽고, trace-driven frontend·GPGPU-Sim 4.0 memory model·validation 인프라를 내 MoH 기반 Head-wise offloading / Prefetch HW-SW codesign 연구에 어떻게 연결할지 정리한 논문 정독 주 자료임</p>
+      <h1 style="font-size:36px;line-height:1.15;margin:10px 0 14px;letter-spacing:-.035em;max-width:900px">Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling</h1>
+      <p class="subtitle">Accel-Sim 논문 정리 — Accel-Sim 논문 정독을 통해 trace-driven frontend, GPGPU-Sim 4.0 수정 범위, trace 재사용 전략, validation 인프라 활용 방향을 정리한 자료</p>
       <div class="meta-row">
         <span class="pill">2026-W25</span>
-        <span class="pill">작성자 Junon</span>
-        <span class="pill">지도교수 미팅용</span>
-        <span class="pill">논문 정독 + 실험 설계 주</span>
+        <span class="pill">작성자 · Junon</span>
+        <span class="pill">지도교수 · 홍정규 교수님</span>
+        <span class="pill">논문 정독 + 시뮬레이터 활용 전략</span>
       </div>
     </div>
     <aside class="hero-side">
@@ -315,8 +315,8 @@
         <div class="score"><strong>3</strong><span>결정 요청</span></div>
       </div>
       <div class="ask-box">
-        <b>오늘 홍정규 교수님께 확인받고 싶은 것</b>
-        <p>Prefetch 정책을 trace-driven mode에서 inject할지, execution-driven으로 전환할지, ISA Def 수정 없이 초기 실험을 진행해도 되는지 확인 필요</p>
+        <b>오늘 교수님께 확인받고 싶은 것</b>
+        <p>내 연구에서 Config 수정, GPGPU-Sim 4.0 C++ 수정, ISA Def 수정의 경계를 어떻게 둘지와 trace 재사용·execution-driven 전환 기준 확인 필요</p>
       </div>
     </aside>
   </section>
@@ -334,19 +334,20 @@
     </nav>
 
     <main>
-
+      
       <section id="s-0" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px;line-height:1.25">0. 논문 한눈에 보기</h2>
-            <p class="section-note">논문 출처, TL;DR, 핵심 기여, 핵심 통찰을 빠르게 확인하는 섹션임</p>
+            <h2 style="font-size:27px;letter-spacing:-.03em;margin:0">0. 논문 한눈에 보기</h2>
+            <p class="section-note">논문의 배경·기여·핵심 통찰을 빠르게 확인하기 위한 개요</p>
           </div>
-          <span class="tag info">Overview</span>
+          <span class="tag info">Paper Overview</span>
         </div>
+        <div class="panel">
         <ul>
 <li>제목: Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling (이하 Accel-sim)</li>
 <li><strong>출처</strong>: ISCA 2020 / Mahmoud Khairy, Zhesheng Shen, Tor M. Aamodt, Timothy G. Rogers / Purdue University &amp; UBC</li>
-<li><strong>링크</strong>: <a href="https://doi.org/10.1109/ISCA45697.2020.00047" rel="noopener noreferrer" style="color:#2563eb;font-weight:700;" target="_blank">IEEE DOI</a> | <a href="https://mkhairy.github.io/Docs/Accel-Sim.pdf" rel="noopener noreferrer" style="color:#2563eb;font-weight:700;" target="_blank">저자 PDF</a></li>
+<li><strong>링크</strong>: <a href="https://doi.org/10.1109/ISCA45697.2020.00047" rel="noopener noreferrer" style="color:var(--accent);font-weight:700;text-decoration:none;" target="_blank">IEEE DOI</a> | <a href="https://mkhairy.github.io/Docs/Accel-Sim.pdf" rel="noopener noreferrer" style="color:var(--accent);font-weight:700;text-decoration:none;" target="_blank">저자 PDF</a></li>
 <li><strong>분류 태그</strong>: #GPU-simulation #trace-driven #mISA #GPGPU #accelerator #validation #HW-SW-codesign</li>
 <li><strong>TL;DR</strong>: NVIDIA SASS 트레이스 기반 frontend + 대폭 강화된 memory system 모델로 GPGPU-Sim 3.x 대비 cycle error를 94%→15%로 줄인 오픈소스 GPU 시뮬레이션 프레임워크.</li>
 <li><strong>핵심 기여</strong>:<ol>
@@ -361,18 +362,19 @@
 </ul>
 <hr/>
 
+        </div>
       </section>
-    
 
       <section id="s-1" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px;line-height:1.25">1. 논문 핵심 사항</h2>
-            <p class="section-note">문제의식, 핵심 아이디어, 해결 방법, contribution을 정리한 섹션임</p>
+            <h2 style="font-size:27px;letter-spacing:-.03em;margin:0">1. 논문 핵심 사항</h2>
+            <p class="section-note">문제의식, 핵심 아이디어, 해결 방법, contribution 정리</p>
           </div>
           <span class="tag info">Study Note</span>
         </div>
-        <h3 style="font-size:21px;line-height:1.32;margin-top:22px;">1.1 해결하고자한 문제</h3>
+        <div class="panel">
+        <h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">1.1 해결하고자한 문제</h3>
 <ol>
 <li><p><strong>기능적 문제</strong>: 매년 새 mISA가 등장하는데 이에 맞춰 기능 모델을 유지하는 비용이 너무 크다. cuDNN 같은 hand-tuned SASS 바이너리는 PTX 표현 자체가 없어 기존 simulator에서 아예 실행 불가한 경우도 있음</p>
 </li>
@@ -380,8 +382,8 @@
 </li>
 </ol>
 <hr/>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">1.2  핵심 아이디어</h3>
-<p>고정된 함수 모델을 직접 구현하는 대신 Trace-driven 시뮬레이션을 채택한 시뮬레이션 프레임워크인 Accel-Sim을 제안</p>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">1.2  핵심 아이디어</h3>
+<p>고정된 함수 모델을 직접 구현하는 대신 Trace-driven시뮬레이션을 채택한 시뮬레이션 프레임워크인 Accel-Sim을 제안</p>
 <p>SASS 트레이스를 직접 입력으로 받아 시뮬레이션함으로써,
 functional model 구현에 대한 의존도를 낮추고
 performance model의 정확도와 유연성을 높이는 것</p>
@@ -389,36 +391,37 @@ performance model의 정확도와 유연성을 높이는 것</p>
 저자들은 memory system을 중심으로 현대 GPU 아키텍처를 역공학하여 반영</p>
 <p>즉, 실제 하드웨어가 실행하는 코드를 그대로 재현함으로써 모델링의 시작점인 'Baseline'을 실제 하드웨어와 일치시키는 데 중점</p>
 <hr/>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">1.3 문제를 해결한 방법</h3>
-<figure style="margin:18px 0;text-align:center;"><img alt="그림 1. Accel-Sim의 end-to-end flow" src="assets/Pasted image 20260618163100.png"/><figcaption>그림 1. Accel-Sim의 end-to-end flow</figcaption></figure>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">1.3 문제를 해결한 방법</h3>
+<p>![Pasted image 20260618163100.png](assets/Pasted image 20260618163100.png)</p>
 <p>NVIDIA의 NVBit을 활용한 트레이스 생성기와 PTX 기반의 에뮬레이션 모드를 모두 지원하는 'Ambidextrous(양손잡이형) 프론트엔드'를 구축</p>
 <p>또한, 마이크로벤치마크를 통해 하드웨어의 L1/L2 캐시 및 메모리 시스템의 파라미터를 자동으로 추론하고 구성하는 튜닝 인프라를 도입</p>
 <hr/>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">1.4 Contribution이 뭔지</h3>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">1.4 Contribution이 뭔지</h3>
 <ul>
 <li><p>첫째, 최신 CUDA 바이너리 및 폐쇄형 라이브러리(cuDNN 등)를 시뮬레이션할 수 있는 <strong>확장 가능한 프레임워크를 제공</strong>하여 기존 오픈소스 시뮬레이터의 한계를 극복</p>
 </li>
 <li><p>둘째, Kepler에서 Turing 세대까지의 GPU를 모델링하며 성능 모델의 정확도를 대폭 향상해 기존 대비 <strong>Cycle error를 79% 포인트 감소</strong>시켰습니다.</p>
 </li>
-<li><p>셋째, <strong>하드웨어 검증을 자동화하는 일련의 도구(Microbenchmarks, Tuner, Correlator)를 공개</strong>하여 향후 연구자들이 새로운 하드웨어 설계를 빠르게 검증할 수 있는 표준적인 방법론을 제시</p>
+<li><p>셋째, 하<strong>드웨어 검증을 자동화하는 일련의 도구(Microbenchmarks, Tuner, Correlator)를 공개</strong>하여 향후 연구자들이 새로운 하드웨어 설계를 빠르게 검증할 수 있는 표준적인 방법론을 제시</p>
 </li>
 </ul>
 <hr/>
 
+        </div>
       </section>
-    
 
       <section id="s-2" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px;line-height:1.25">2. 나한테 필요한 정보</h2>
-            <p class="section-note">Accel-Sim 사용 과정에서 헷갈린 지점과 내 연구 적용 조건을 분리한 섹션임</p>
+            <h2 style="font-size:27px;letter-spacing:-.03em;margin:0">2. 나한테 필요한 정보</h2>
+            <p class="section-note">내 연구에서 Accel-Sim을 사용할 때 필요한 수정 기준과 오해 정리</p>
           </div>
-          <span class="tag warn">Decision Point</span>
+          <span class="tag warn">Decision Basis</span>
         </div>
-        <h3 style="font-size:21px;line-height:1.32;margin-top:22px;">2.1 논문에서 설명한 내용</h3>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.1.1 모드가 두 개지요</h4>
-<blockquote class="callout-lite">
+        <div class="panel">
+        <h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">2.1 논문에서 설명한 내용</h3>
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.1.1 모드가 두 개지요</h4>
+<blockquote>
 <p>Our new frontend supports both vISA (PTX) execution-driven and mISA (SASS) trace-driven simulation</p>
 </blockquote>
 <ul>
@@ -430,15 +433,15 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </ul>
 </li>
 </ul>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.1.2 To add a new specialized unit 하려면</h4>
-<blockquote class="callout-lite">
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.1.2 To add a new specialized unit 하려면</h4>
+<blockquote>
 <p>To add a new specialized unit, the user declares the new unit in the configuration file and maps the machine ISA op codes that use this unit in the ISA def file, as described in Figure 1.</p>
 </blockquote>
 <ul>
 <li>Config에 새로운 Unit은 선언해야됨</li>
 <li>ISA Def 파일에서 이 유닛을 사용하는 machine ISA op code를 매핑해야됨 (주의!! 새로운 ISA 만들라는 뜻이 아님!!)</li>
 </ul>
-<blockquote class="callout-lite">
+<blockquote>
 <p>If execution-driven PTX support is required, then the user must also implement the code to emulate the new instruction’s functionality</p>
 </blockquote>
 <ul>
@@ -460,9 +463,9 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </ul>
 </li>
 </ul>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.1.3 다양한 Config에서 마이크로벤치를 제공하지만 전부 제공하는 건 아님</h4>
-<blockquote class="callout-lite">
-<p>For other parameters that cannot be directly determined by our microbenchmarks (such as warp scheduling, memory scheduling, the L2 cache interleaving granularity and the L2 cache hashing function), Accel-Sim simulates each possible ccombination of these four parameters on a set of memory</p>
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.1.3 다양한 Config에서마이크로벤치를 제공하지만 전부 제공하는 건 아님</h4>
+<blockquote>
+<p>For other parameters that cannot be directly determined by our microbenchmarks (such as warp scheduling, memory scheduling, the L2 cache interleaving granularity and the L2 cache hashing function), Accel-Sim simulates each possible combination of these four parameters on a set of memory</p>
 </blockquote>
 <ul>
 <li>warp scheduling, memory scheduling, the L2 cache interleaving granularity and the L2 cache hashing function 같은건 directly 알 방법이 없다고 함.<ul>
@@ -473,7 +476,7 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </li>
 <li>해결 방법<ul>
 <li>탐색 기반 추정<ul>
-<li>직접적인 측정값이 없기 때문에, 발생 가능한 combination을 시뮬레이터에서 미리 설정하고 시뮬레이션을 수행</li>
+<li>직접적인 측정값이 없기 때문에, 발생 가능한 ombination을 시뮬레이터에서 미리 설정하고 시뮬레이션을 수행</li>
 </ul>
 </li>
 <li>상관관계 분석<ul>
@@ -488,8 +491,8 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </li>
 </ul>
 <hr/>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">2.2 내가 잘못 이해한 내용 &amp; 이번에 알아가는 내용</h3>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.2.1 Trace는 HW가 바뀌어도 그대로 쓴다...?</h4>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">2.2 내가 잘못 이해한 내용 &amp; 이번에 알아가는 내용</h3>
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.2.1 Trace는 HW가 바뀌어도 그대로 쓴다...?</h4>
 <ul>
 <li>특정 작업(Workload)에 대한 Trace를 한 번 생성해두면, 시뮬레이터의 설정을 변경하여 다양한 HW 구조에서의 성능을 비교/평가할 수 있는 것이 맞다.<ul>
 <li>매번 Trace를 생성하는 것이 아님</li>
@@ -498,7 +501,7 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </ul>
 </li>
 </ul>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.2.2 그렇다고 그냥 막 HW 수정하고 Trace 그냥 그대로 쓸 수 있는 건 아님</h4>
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.2.2 그렇다고 그냥 막 HW 수정하고 Trace 그냥 그대로 쓸 수 있는 건 아님</h4>
 <ul>
 <li>하드웨어 설정을 변경할 때, 해당 변경 사항을 시뮬레이터가 인식할 수 있도록 config 파일 등을 수정하는 과정은 반드시 필요<ul>
 <li>시뮬레이터(Performance Model)는 하드웨어의 구성 요소(SM 개수, L1/L2 캐시 용량, 메모리 대역폭 등)에 대한 정보를 가지고 시뮬레이션을 수행합니다. 따라서 "이전과 다른 하드웨어 구조"를 시뮬레이션하고 싶다면, 그에 맞게 시뮬레이터의 config 파일을 수정하여 시뮬레이터가 새로운 하드웨어처럼 동작하도록 만들어야 함</li>
@@ -511,64 +514,59 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </ul>
 </li>
 </ul>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.2.3  하드웨어의 ISA 자체가 변경되는 경우(예: 기존에 없던 새로운 명령어가 추가됨)에는...?</h4>
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.2.3  하드웨어의 ISA 자체가 변경되는 경우(예: 기존에 없던 새로운 명령어가 추가됨)에는...?</h4>
 <ul>
 <li>Accel-Sim의 ISA Def 파일을 수정해야 함.<ul>
 <li>새로운 명령어가 어떤 실행 유닛에서 처리되어야 하는지 매핑 정보를 업데이트해 주어야 함</li>
 </ul>
 </li>
 </ul>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.2.4 [2.2.1]~[2.2.3] 정리</h4>
-<blockquote class="callout-lite">
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.2.4 [2.2.1]~[2.2.3] 정리</h4>
+<blockquote>
 <p>HW의 설정이 변경되어도 Trace를 그대로 쓸 수 있는것 맞음.
 그러나, Config 설정은 변경된 HW에 따라서 수정해줘야 함.
 그러나, 새로운 ISA가 도입되는 HW 수정이라면, ISA Def 파일까지 수정해야 함</p>
 </blockquote>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">2.2.5 140개의 Workload가 있다는데, 이걸 어디다 씀...?</h4>
-<figure style="margin:18px 0;text-align:center;"><img alt="표. Accel-Sim에서 제공하는 benchmark suite와 compressed trace size" src="assets/Pasted image 20260618185809.png"/><figcaption>표. Accel-Sim에서 제공하는 benchmark suite와 compressed trace size</figcaption></figure>
-- 예를 들어, 그냥 llama3-8b의 디코드 일부분만 떼어서 돌려본다고 가정하면, 저 워크로드들 안쓰고 그냥 내가 trace 만들어서 하면되는거임
-- 근데 HW 수정한 부분에 대한 성능 평가만 해보고 싶으면 쓸 수도 있는거고, 아무튼 저자들이 만들어놓은 Trace가 있다 정도로 이해하면 될 듯
-
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.2.5 140개의 Workload가 있다는데, 이걸 어디다 씀...?</h4>
+<p>![Pasted image 20260618185809.png](assets/Pasted image 20260618185809.png)</p>
+<ul>
+<li>예를 들어, 그냥 llama3-8b의 디코드 일부분만 떼어서 돌려본다고 가정하면, 저 워크로드들 안쓰고 그냥 내가 trace 만들어서 하면되는거임</li>
+<li>근데 HW 수정한 부분에 대한 성능 평가만 해보고 싶으면 쓸 수도 있는거고, 아무튼 저자들이 만들어놓은 Trace가 있다 정도로 이해하면 될 듯</li>
+</ul>
 <hr/>
 
+        </div>
       </section>
-    
 
       <section id="s-3" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px;line-height:1.25">3. 내가 논문에서 얻어갈 내용</h2>
-            <p class="section-note">내 연구에서 Accel-Sim을 어떻게 수정하고 검증할지 연결한 섹션임</p>
+            <h2 style="font-size:27px;letter-spacing:-.03em;margin:0">3. 내가 논문에서 얻어갈 내용</h2>
+            <p class="section-note">내 연구의 Accel-Sim 수정 범위, trace 재사용, validation 활용 방향 정리</p>
           </div>
           <span class="tag good">Actionable</span>
         </div>
-        
-        <div class="next-grid" style="margin-bottom:16px">
-          <div class="next"><h3 style="font-size:21px">수정 범위 구분</h3><ul><li>Config 수정</li><li>Performance Model 수정</li><li>ISA Def 수정 여부 판단</li></ul></div>
-          <div class="next"><h3 style="font-size:21px">Trace 재사용</h3><ul><li>HW 파라미터 변경은 반복 실험 가능</li><li>memory instruction 흐름 변화 시 재생성 또는 injection 필요</li></ul></div>
-          <div class="next"><h3 style="font-size:21px">Validation</h3><ul><li>microbenchmark + correlator 파이프라인 활용</li><li>prefetch 효과용 custom microbenchmark 추가 가능</li></ul></div>
-        </div>
-        <h3 style="font-size:21px;line-height:1.32;margin-top:22px;">3.1 내 연구에서 Accel-Sim을 어떻게 수정해야 하는가</h3>
-<h4 style="font-size:18px;line-height:1.35;color:#4b5563;margin-top:18px;">3.1.1 내가 제안 하는 HW가 어느정도의 수정을 요구하는지 알아야됨</h4>
+        <div class="panel">
+        <h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">3.1 내 연구에서 Accel-Sim을 어떻게 수정해야 하는가</h3>
+<h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">3.1.1 내가 제안 하는 HW가 어느정도의 수정을 요구하는지 알아야됨</h4>
 <ul>
-<li><strong>Config 수정만으로 끝나는 부분</strong>: offloading 타겟이 되는 메모리 계층(L1/L2/HBM)의 용량, 레이턴시, 대역폭 파라미터 조정 등등</li>
+<li>-<strong>Config 수정만으로 끝나는 부분</strong>: offloading 타겟이 되는 메모리 계층(L1/L2/HBM)의 용량, 레이턴시, 대역폭 파라미터 조정 등등</li>
 <li><strong>Performance Model(GPGPU-Sim 4.0) 코드 수정이 필요한 부분</strong>: Prefetch 로직 자체 — 어떤 head를 언제 prefetch할지 결정하는 정책은 기존 구조에 없으니 C++ 코드 레벨 수정 불가피</li>
 <li><strong>ISA Def 수정이 필요한지</strong>: offloading/prefetch를 새로운 명령어(ISA)로 추상화하지 않고 기존 LD/ST 명령어로 모델링한다면 ISA Def 수정은 불필요. 반면 prefetch instruction을 명시적으로 넣으려면 필요</li>
 </ul>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">3.2 Trace 재사용 전략</h3>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">3.2 Trace 재사용 전략</h3>
 <ul>
 <li>Prefetch 정책 변경, 메모리 계층 파라미터 변경 등은 <strong>Config 레벨에서만 바꾸면서</strong> 반복 실험 가능</li>
 <li>BUT!!  Prefetch 동작 자체가 메모리 접근 패턴을 바꾼다면 — 즉, prefetch로 인해 실제로 실행되는 메모리 instruction이 달라진다면 — trace를 다시 생성해야 함</li>
 <li>이 경우는 execution-driven mode로 fallback하거나, prefetch를 별도 inject하는 방식을 고려해야 함</li>
 </ul>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">3.3 Validation 인프라를 내 연구에 어떻게 활용할 것인가</h3>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">3.3 Validation 인프라를 내 연구에 어떻게 활용할 것인가</h3>
 <ul>
 <li>논문이 강조하는 microbenchmark + correlator 파이프라인은 내가 HW 수정 후 "이 모델이 실제와 얼마나 가까운가"를 검증하는 데 그대로 쓸 수 있음!!<ul>
 <li>기존 38개 microbenchmark 중 memory latency/bandwidth 관련 것들은 offloading 경로 검증에 바로 활용 가능</li>
 <li>Prefetch 효과 측정을 위한 <strong>custom microbenchmark를 추가</strong>해야 할 수 있음<ul>
 <li>논문의 Figure 3 (L1 latency 벤치마크) 작성 패턴을 그대로 따르면 됨</li>
-<li><figure style="margin:18px 0;text-align:center;"><img alt="그림 3. L1 latency microbenchmark 작성 패턴" src="assets/Pasted image 20260618191929.png"/><figcaption>그림 3. L1 latency microbenchmark 작성 패턴</figcaption></figure>
-</li>
+<li>![Pasted image 20260618191929.png](assets/Pasted image 20260618191929.png)</li>
 </ul>
 </li>
 </ul>
@@ -576,34 +574,19 @@ performance model의 정확도와 유연성을 높이는 것</p>
 </ul>
 <hr/>
 
+        </div>
       </section>
-    
 
       <section id="s-4" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px;line-height:1.25">4. 나만의 결론</h2>
-            <p class="section-note">수정 범위, trace 전략, 실험 설계 기준을 최종 정리한 섹션임</p>
+            <h2 style="font-size:27px;letter-spacing:-.03em;margin:0">4. 나만의 결론</h2>
+            <p class="section-note">실제 연구 적용을 위한 수정 순서와 실험 설계 trade-off 정리</p>
           </div>
           <span class="tag good">Conclusion</span>
         </div>
-        
-        <div class="summary-grid" style="margin-bottom:16px">
-          <div class="big-insight">
-            <div>
-              <div class="eyebrow" style="color:#93c5fd">Main Claim</div>
-              <h3 style="font-size:21px">Accel-Sim은 trace를 고정하고 HW를 바꿔가며 실험하기에 최적화된 도구임</h3>
-              <p>다만 prefetch가 instruction 흐름 자체를 바꾸는 순간에는 execution-driven 전환 또는 trace injection 기준이 필요함</p>
-            </div>
-            <div class="meta-row"><span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">Trace Reuse Strategy</span></div>
-          </div>
-          <div class="mini-cards">
-            <div class="mini"><b>Layer 1</b><p>Config만 수정하는 HW 파라미터 변경은 빠르고 검증 쉬움</p></div>
-            <div class="mini"><b>Layer 2</b><p>Prefetch 정책 구현은 GPGPU-Sim 4.0 C++ 수정이 필요한 핵심 contribution임</p></div>
-            <div class="mini"><b>Layer 3</b><p>ISA Def 수정은 prefetch를 명시적 명령어로 넣는 경우에만 필요함</p></div>
-          </div>
-        </div>
-        <h3 style="font-size:21px;line-height:1.32;margin-top:22px;">4.1 내 연구에서 Accel-Sim 수정의 범위와 순서 구분해야된다.</h3>
+        <div class="panel">
+        <h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">4.1 내 연구에서 Accel-Sim 수정의 범위와 순서 구분해야된다.</h3>
 <pre><code>Layer 1 (Config만 수정) — HW 파라미터 바꾸기
   → offloading 대상 메모리 계층 설정
   → 빠름, 검증 쉬움
@@ -616,32 +599,33 @@ Layer 3 (ISA Def 수정) — 필요시만
   → Prefetch를 명시적 명령어로 넣으려면 필요
   → 아마 초기 단계에서는 불필요
 </code></pre>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">4.2 실험 설계에서 생길 트레이드오프</h3>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">4.2 실험 설계에서 생길 트레이드오프</h3>
 <ul>
 <li>Trace는 특정 HW에서 실행된 결과물이므로, 내가 prefetch로 바꾸는 메모리 접근 패턴이 trace 자체에 반영되지 않음</li>
 <li>이 문제를 어떻게 다룰지 — execution-driven mode로 전환하거나, prefetch injection을 trace에 수동으로 추가하거나 — 가 실험 설계의 핵심 결정 포인트</li>
 </ul>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">4.3 한 줄 요약</h3>
-<blockquote class="callout-lite">
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">4.3 한 줄 요약</h3>
+<blockquote>
 <p>Accel-Sim은 Trace를 고정하고 HW를 바꿔가며 실험하기에 최적화된 도구</p>
 <p>내 연구에서도 trace를 한 번 생성해두고 offloading/prefetch 정책과 메모리 파라미터를 바꾸며 반복 실험하는 방식으로 활용하되,</p>
 <p>prefetch가 instruction 흐름 자체를 바꾸는 시점에서는 execution-driven으로 전환하는 기준을 사전에 설정해두어야 함</p>
 </blockquote>
 <hr/>
 
+        </div>
       </section>
-    
 
       <section id="s-5" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px;line-height:1.25">5. 기타 정리할 내용</h2>
-            <p class="section-note">후속 리딩과 논문 이해를 위한 용어·표현 정리 섹션임</p>
+            <h2 style="font-size:27px;letter-spacing:-.03em;margin:0">5. 기타 정리할 내용</h2>
+            <p class="section-note">용어와 논문 리딩 표현을 후속 참고용으로 정리</p>
           </div>
           <span class="tag info">Reference</span>
         </div>
-        <h3 style="font-size:21px;line-height:1.32;margin-top:22px;">5.1 용어 정리</h3>
-<div style="overflow-x:auto;margin:12px 0 16px;"><table>
+        <div class="panel" style="overflow-x:auto">
+        <h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">5.1 용어 정리</h3>
+<table>
 <thead>
 <tr>
 <th>용어</th>
@@ -726,9 +710,9 @@ Layer 3 (ISA Def 수정) — 필요시만
 <td>규칙적 메모리 접근 패턴을 (base, stride) 쌍으로 압축.</td>
 </tr>
 </tbody>
-</table></div>
-<h3 style="font-size:21px;line-height:1.32;margin-top:22px;">5.2 논문 리딩을 위한 알아두면 좋은 영어 표현</h3>
-<div style="overflow-x:auto;margin:12px 0 16px;"><table>
+</table>
+<h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">5.2 논문 리딩을 위한 알아두면 좋은 영어 표현</h3>
+<table>
 <thead>
 <tr>
 <th style="text-align:left">영어 표현</th>
@@ -813,14 +797,14 @@ Layer 3 (ISA Def 수정) — 필요시만
 <td style="text-align:left">Simulation-gating is a trade-off between event-driven and cycle-driven simulation.</td>
 </tr>
 </tbody>
-</table></div>
+</table>
 
+        </div>
       </section>
-    
     </main>
   </div>
 
-  <p class="footer">#Accel-Sim · #GPU-simulation · #trace-driven · #GPGPU-Sim · #HW-SW-codesign · 2026-W25</p>
+  <p class="footer">#GPU-simulation · #trace-driven · #mISA · #GPGPU · #validation · #HW-SW-codesign · 2026-W25</p>
 </div>
 
 <!-- KaTeX 수식 자동 렌더 -->
