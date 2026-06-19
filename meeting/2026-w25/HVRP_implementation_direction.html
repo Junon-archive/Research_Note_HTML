@@ -326,8 +326,8 @@
     <nav class="sticky-nav" aria-label="page navigation">
       <h3 style="font-size:21px">Meeting Flow</h3>
       <a class="nav-item" href="#s-hms">1. HMS 논문에서 얻어갈 내용</a>
-      <a class="nav-item" href="#s-conclusion-1">2. 나만의 결론</a>
-      <a class="nav-item" href="#s-conclusion-2">3. 나만의 결론</a>
+      <a class="nav-item" href="#s-conclusion-1">2. 나의 결론</a>
+      <a class="nav-item" href="#s-conclusion-2">3. 나의 결론</a>
       <a class="nav-item" href="#s-location">4. 구현 위치</a>
       <a class="nav-item" href="#s-files">5.0 Accel-sim 수정 파일</a>
       <a class="nav-item" href="#s-risks">6.0 고려해봐야하는 문제점</a>
@@ -395,7 +395,6 @@ tick()에서 prefetch 실행</code></pre>
             <h3 style="font-size:21px">Trace 재사용 전략</h3>
             <ul>
               <li><strong>Trace 재사용 전략</strong>: HMS도 SASS trace 그대로 쓰고 page 메타데이터만 별도로 붙이는 방식임</li>
-              <li>내 연구도 주소 → <code>head_id</code> 매핑 파일만 따로 만들면 trace 재생성 없이 가능함</li>
             </ul>
           </div>
         </div>
@@ -404,7 +403,7 @@ tick()에서 prefetch 실행</code></pre>
       <section id="s-conclusion-1" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px">2. 나만의 결론</h2>
+            <h2 style="font-size:27px">2. 나의 결론</h2>
             <p class="section-note">Accel-sim 구조를 그대로 재활용하고 필요한 기능만 주입하는 1차 수정 범위 정리임</p>
           </div>
           <span class="tag good">Actionable</span>
@@ -469,7 +468,7 @@ tick()에서 prefetch 실행</code></pre>
       <section id="s-conclusion-2" class="section">
         <div class="section-head">
           <div>
-            <h2 style="font-size:27px">3. 나만의 결론</h2>
+            <h2 style="font-size:27px">3. 나의 결론</h2>
             <p class="section-note">Accel-sim/GPGPU-sim 재활용 방향과 실제 구현·평가 대상을 더 구체화한 정리임</p>
           </div>
           <span class="tag warn">검증 중</span>
@@ -734,9 +733,9 @@ HBM (KV cache 상주)</code></pre>
         <div class="panel">
           <h3 style="font-size:21px">Claude 왈 — Predictor SRAM의 특수성</h3>
           <ul>
-            <li>네 SRAM의 특수성 있음</li>
-            <li>네 Predictor SRAM은 일반 캐시와 결정적으로 다른 점이 있음</li>
-            <li><strong>테이블의 key가 곧 주소야.</strong></li>
+            <li>---</li>
+            <li>---</li>
+            <li><strong>---</strong></li>
           </ul>
         </div>
 
@@ -744,9 +743,9 @@ HBM (KV cache 상주)</code></pre>
           <div class="codecard__name">Predictor SRAM direct indexing 아이디어</div>
           <pre><code>조회 요청: (layer_idx, prev_8set, combo5)
                ↓
-        uint32 packed key 생성
+        ---
                ↓
-        이 key로 SRAM 내 위치를 직접 계산 가능</code></pre>
+        ---</code></pre>
         </div>
 
         <div class="callout"><b>남은 질문</b>일반 캐시처럼 "임의의 메모리 주소가 어느 캐시 라인에 매핑되는지" 모르는 상황이 아님. key 자체가 구조화되어 있고, 테이블이 key 순으로 정렬되어 있음. 따라서 tag 확인을 일반 캐시처럼 모델링해야 하는지, direct-indexed table lookup으로 모델링해도 되는지 확인 필요함</div>
