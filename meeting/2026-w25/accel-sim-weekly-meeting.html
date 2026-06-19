@@ -392,7 +392,10 @@ performance model의 정확도와 유연성을 높이는 것</p>
 <p>즉, 실제 하드웨어가 실행하는 코드를 그대로 재현함으로써 모델링의 시작점인 'Baseline'을 실제 하드웨어와 일치시키는 데 중점</p>
 <hr/>
 <h3 style="font-size:21px;font-weight:700;margin:22px 0 10px;letter-spacing:-.02em;color:#1f2933;">1.3 문제를 해결한 방법</h3>
-<p>![Pasted image 20260618163100.png](assets/Pasted image 20260618163100.png)</p>
+<figure style="margin:14px 0 18px;text-align:center;">
+  <img src="assets/Pasted image 20260618163100.png" alt="Fig. 1: Accel-Sim's end-to-end flow" style="max-width:100%;border:1px solid var(--line);border-radius:6px;">
+  <figcaption style="font-size:12.5px;color:var(--muted);margin-top:8px;">Fig. 1. Accel-Sim의 end-to-end 흐름</figcaption>
+</figure>
 <p>NVIDIA의 NVBit을 활용한 트레이스 생성기와 PTX 기반의 에뮬레이션 모드를 모두 지원하는 'Ambidextrous(양손잡이형) 프론트엔드'를 구축</p>
 <p>또한, 마이크로벤치마크를 통해 하드웨어의 L1/L2 캐시 및 메모리 시스템의 파라미터를 자동으로 추론하고 구성하는 튜닝 인프라를 도입</p>
 <hr/>
@@ -528,7 +531,10 @@ performance model의 정확도와 유연성을 높이는 것</p>
 그러나, 새로운 ISA가 도입되는 HW 수정이라면, ISA Def 파일까지 수정해야 함</p>
 </blockquote>
 <h4 style="font-size:18px;font-weight:700;color:#4b5563;margin:18px 0 8px;letter-spacing:-.015em;">2.2.5 140개의 Workload가 있다는데, 이걸 어디다 씀...?</h4>
-<p>![Pasted image 20260618185809.png](assets/Pasted image 20260618185809.png)</p>
+<figure style="margin:14px 0 18px;text-align:center;">
+  <img src="assets/Pasted image 20260618185809.png" alt="Table: Benchmark suites and trace sizes" style="max-width:100%;border:1px solid var(--line);border-radius:6px;">
+  <figcaption style="font-size:12.5px;color:var(--muted);margin-top:8px;">Table. Accel-Sim이 제공하는 벤치마크 suite 및 trace 크기</figcaption>
+</figure>
 <ul>
 <li>예를 들어, 그냥 llama3-8b의 디코드 일부분만 떼어서 돌려본다고 가정하면, 저 워크로드들 안쓰고 그냥 내가 trace 만들어서 하면되는거임</li>
 <li>근데 HW 수정한 부분에 대한 성능 평가만 해보고 싶으면 쓸 수도 있는거고, 아무튼 저자들이 만들어놓은 Trace가 있다 정도로 이해하면 될 듯</li>
@@ -566,7 +572,10 @@ performance model의 정확도와 유연성을 높이는 것</p>
 <li>기존 38개 microbenchmark 중 memory latency/bandwidth 관련 것들은 offloading 경로 검증에 바로 활용 가능</li>
 <li>Prefetch 효과 측정을 위한 <strong>custom microbenchmark를 추가</strong>해야 할 수 있음<ul>
 <li>논문의 Figure 3 (L1 latency 벤치마크) 작성 패턴을 그대로 따르면 됨</li>
-<li>![Pasted image 20260618191929.png](assets/Pasted image 20260618191929.png)</li>
+<li><figure style="margin:10px 0;text-align:center;">
+  <img src="assets/Pasted image 20260618191929.png" alt="Fig. 3: L1 latency microbenchmark" style="max-width:100%;border:1px solid var(--line);border-radius:6px;">
+  <figcaption style="font-size:12.5px;color:var(--muted);margin-top:8px;">Fig. 3. L1 latency microbenchmark</figcaption>
+</figure></li>
 </ul>
 </li>
 </ul>
