@@ -637,7 +637,7 @@ tick()에서 prefetch 실행</code></pre></div>
           <div class="callout"><b>Layer 2 세부 구현</b>
             <ol>
               <li><strong>Predictor SRAM Controller</strong> 신규 작성: Markov 테이블 조회 로직임. <code>enqueue()</code> 받아서 head_id → table hit/miss 판별 → tick에서 결과 반환함.</li>
-              <li><strong>KV Prefetch Scheduler</strong> (<code>gmmu.cc</code> 패턴 참고): 테이블 히트 시 다음 토큰의 KV를 미리 HBM에서 fetch함. HMS의 <code>PCIE_VALIDATE</code> 큐 패턴을 여기서 재활용할 수 있어 CPU-resident 데이터 fetch 경로가 이미 구현되어 있으니, 분기 조건만 head_id 기반으로 추가하면 됨.</li>
+              <li><strong>KV Prefetch Scheduler</strong> (<code>gmmu.cc</code> 패턴 참고): 테이블 히트 시 다음 레이어의 KV를 미리 HBM에서 fetch함. HMS의 <code>PCIE_VALIDATE</code> 큐 패턴을 여기서 재활용할 수 있어 CPU-resident 데이터 fetch 경로가 이미 구현되어 있으니, 분기 조건만 head_id 기반으로 추가하면 됨.</li>
             </ol>
           </div>
         </div>
@@ -678,7 +678,7 @@ tick()에서 prefetch 실행</code></pre></div>
               <li>조회 결과가 나오기 전에 prefetch를 언제 트리거하냐, 레이턴시 겹침을 어떻게 모델링할 것인가가 핵심임.</li>
               <li>HMS의 “판단 → 큐잉 → tick 실행” 패턴을 그대로 써도 될 듯함.</li>
               <li>조회 요청을 큐에 넣는 순간 prefetch 큐도 동시에 세우는 방식 생각중임.</li>
-              <li><strong>구체적으로&gt;??</strong> 토큰 t의 attention 시작 시점에 SRAM 조회 요청을 enqueue함.</li>
+              <li><strong>구체적으로&gt;??</strong> 레이어 l의 attention 시작 시점에 SRAM 조회 요청을 enqueue함.</li>
               <li>SRAM hit이 확인되는 순간(hit latency 후) KV prefetch 큐에 해당 head들의 HBM 주소를 넣음.</li>
               <li>miss 시에는 원본 라우터 fallback 경로를 사용함 — 기존 HBM 접근 경로 그대로임.</li>
             </ul>

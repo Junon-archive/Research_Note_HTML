@@ -551,7 +551,7 @@ tick()에서 prefetch 실행</code></pre>
           </ul>
           <h4 style="font-size:18px">구체적으로&gt;??</h4>
           <ul>
-            <li>토큰 t의 attention 시작 시점에 SRAM 조회 요청을 enqueue함</li>
+            <li>레이어 l의 attention 시작 시점에 SRAM 조회 요청을 enqueue함</li>
             <li>SRAM hit이 확인되는 순간(hit latency 후) KV prefetch 큐에 해당 head들의 HBM 주소를 넣기</li>
             <li>miss 시에는 원본 라우터 fallback 경로를 사용함 — 이건 기존 HBM 접근 경로 그대로임</li>
           </ul>
@@ -606,25 +606,25 @@ HBM (나머지 테이블 + KV cache)</code></pre>
         <h3 style="font-size:21px">4.3 Prefetch Scheduler</h3>
         <figure>
           <img src="assets/Pasted image 20260619113237.png" alt="Token t Attention에서 Predictor SRAM 조회 후 KV Prefetch Scheduler가 HBM/KV Cache로 prefetch 요청을 보내고 Token t+1 Attention에서 이미 prefetch된 KV를 사용하는 시퀀스 다이어그램">
-          <figcaption>그림 1. 토큰 t에서 Markov table lookup 후 선택된 head의 KV를 토큰 t+1 attention 시작 전 미리 준비하는 Prefetch Scheduler 흐름임</figcaption>
+          <figcaption>그림 1. 레이어 l에서 Markov table lookup 후 선택된 head의 KV를 레이어 l+1 attention 시작 전 미리 준비하는 Prefetch Scheduler 흐름임</figcaption>
         </figure>
 
         <div class="panel">
           <ul>
-            <li>토큰 t에서 Markov 테이블 조회 결과가 나오면,</li>
-            <li><strong>토큰 t+1의 attention에서 필요할 KV cache</strong> — 선택된 k개 head의 K, V — 를 미리 HBM에서 가져오는 것임</li>
+            <li>레이어 l에서 Markov 테이블 조회 결과가 나오면,</li>
+            <li><strong>레이어 l+1의 attention에서 필요할 KV cache</strong> — 선택된 k개 head의 K, V — 를 미리 HBM에서 가져오는 것임</li>
           </ul>
         </div>
 
         <div class="codecard">
-          <div class="codecard__name">토큰 t 처리 중 KV prefetch 흐름</div>
-          <pre><code>토큰 t 처리 중
+          <div class="codecard__name">레이어 l 처리 중 KV prefetch 흐름</div>
+          <pre><code>레이어 l 처리 중
     ↓
 SRAM에서 테이블 조회 → "다음에 head {2,5,7,9,11,13,14,15} 쓸 것 같다"
     ↓
 이 8개 head의 KV를 HBM에서 미리 fetch
     ↓
-토큰 t+1 attention 시작할 때 KV가 이미 올라와 있음</code></pre>
+레이어 l+1 attention 시작할 때 KV가 이미 올라와 있음</code></pre>
         </div>
 
         <div class="experiment">
