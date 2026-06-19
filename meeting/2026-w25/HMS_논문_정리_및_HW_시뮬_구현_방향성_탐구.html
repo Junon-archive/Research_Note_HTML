@@ -293,193 +293,192 @@
 <body>
 <div class="page">
 
-  <!-- ── Hero ── -->
   <section class="hero">
     <div class="hero-main">
       <div class="eyebrow">Weekly Research Brief · 2026-W25</div>
       <h1 style="font-size:36px">HMS 논문 정리 및 HW 시뮬 구현 방향성 탐구</h1>
-      <p class="subtitle">HPCA 2024 HMS 논문을 정리하고, Accel-Sim/GPGPU-Sim 기반 HW 시뮬레이터 구현 방향성을 코드 구조 관점에서 탐구한 보고임</p>
+      <p class="subtitle">HMS 논문을 정리하고, Accel-sim/GPGPU-Sim 기반 HW 시뮬레이터 구현 방향성을 도출한 코드 분석 중심 보고임.</p>
       <div class="meta-row">
-        <span class="pill">2026-W25</span>
-        <span class="pill">작성자 · Junon</span>
-        <span class="pill">지도교수 · 홍정규 교수님</span>
+        <span class="pill">2026.06.15 – 06.21</span>
+        <span class="pill">지도교수 미팅용</span>
         <span class="pill">논문 정독 + 코드 분석 주</span>
+        <span class="pill">작성자: Junon</span>
+        <span class="pill">지도교수: 홍정규 교수님</span>
       </div>
     </div>
     <aside class="hero-side">
       <div class="brief-score">
-        <div class="score"><strong>5</strong><span>핵심 발견</span></div>
+        <div class="score"><strong>4</strong><span>핵심 발견</span></div>
         <div class="score"><strong>0</strong><span>주요 실험</span></div>
         <div class="score"><strong>3</strong><span>결정 요청</span></div>
       </div>
       <div class="ask-box">
         <b>오늘 교수님께 확인받고 싶은 것</b>
-        <p>HMS의 “판단 → 큐잉 → tick 실행” 패턴을 Markov prefetch scheduler에 재사용하는 방향, Predictor SRAM 모델링 방식, KV prefetch/suppress 구현 범위 확인 필요</p>
+        <p>HMS의 “판단 → 큐잉 → tick 실행” 구조를 Markov prefetch scheduler 구현 패턴으로 가져가는 방향이 타당한지 확인 필요.</p>
       </div>
     </aside>
   </section>
 
-  <!-- ── Layout: sticky nav + main ── -->
   <div class="layout">
     <nav class="sticky-nav" aria-label="page navigation">
       <h3>Meeting Flow</h3>
       <a class="nav-item" href="#s-overview">0. 논문 한눈에 보기</a>
       <a class="nav-item" href="#s-core">1. 논문 핵심 사항</a>
-      <a class="nav-item" href="#s-need">2. 나한테 필요한 정보</a>
-      <a class="nav-item" href="#s-takeaway">3. 논문에서 얻어갈 내용</a>
+      <a class="nav-item" href="#s-needed">2. 나한테 필요한 정보</a>
+      <a class="nav-item" href="#s-takeaway">3. 내가 논문에서 얻어갈 내용</a>
       <a class="nav-item" href="#s-conclusion">4. 나만의 결론</a>
-      <a class="nav-item" href="#s-terms">5. 기타 정리할 내용</a>
+      <a class="nav-item" href="#s-appendix">5. 기타 정리할 내용</a>
     </nav>
 
     <main>
       <section id="s-overview" class="section">
         <div class="section-head">
-          <div>
-            <h2 style="font-size:27px">0. 논문 한눈에 보기</h2>
-            <p class="section-note">논문 출처, 핵심 기여, TL;DR, 한 줄 직관을 빠르게 확인하는 섹션임</p>
-          </div>
-          <span class="tag info">Paper Overview</span>
-        </div>
-
+    <div>
+      <h2 style="font-size:27px">0. 논문 한눈에 보기</h2>
+      <p class="section-note">HMS 논문의 출처, 문제의식, 핵심 기여, 한 줄 직관을 빠르게 정리한 섹션임.</p>
+    </div>
+    <span class="tag info">Paper Overview</span>
+  </div>
         <div class="summary-grid">
           <div class="big-insight">
             <div>
               <div class="eyebrow" style="color:#93c5fd">Main Claim</div>
-              <h3 style="font-size:21px">GPU에 PCM 기반 SCM을 붙여 용량 벽을 돌파하되, DRAM cache의 bandwidth overhead를 세 메커니즘으로 제거함</h3>
-              <p>AMIL(tag 집약), CTC(L2 repurpose tag cache), SCM-aware bypass policy를 통해 oversubscribed HBM 대비 최대 12.5×, 평균 2.9× 성능 향상 달성함</p>
+              <h3 style="font-size:21px">SCM으로 GPU 메모리 용량 벽을 넘되, DRAM cache의 대역폭 오버헤드를 줄이는 것이 HMS의 핵심임.</h3>
+              <p>AMIL, CTC, SCM-aware bypass policy를 통해 oversubscribed HBM 대비 최대 12.5×, 평균 2.9× 성능 향상을 달성함.</p>
             </div>
             <div class="meta-row">
-              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">#DRAM-cache</span>
-              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">#SCM</span>
-              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">#Accel-Sim</span>
+              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">HPCA 2024</span>
+              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">DRAM Cache</span>
+              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">SCM</span>
             </div>
           </div>
           <div class="mini-cards">
-            <div class="mini"><b>출처</b><p>HPCA 2024 / Jeongmin Hong, Sungjun Cho, Geonwoo Park, Wonhyuk Yang, Young-Ho Gong, Gwangsun Kim / POSTECH &amp; Soongsil University</p></div>
-            <div class="mini"><b>DOI</b><p><a href="https://doi.org/10.1109/HPCA57654.2024.00021">10.1109/HPCA57654.2024.00021</a></p></div>
-            <div class="mini"><b>한 줄 직관</b><p>“SCM은 sequential read엔 HBM만큼 빠르지만 random write엔 치명적임 — 이 비대칭성을 3차원 score로 정량화해 DRAM cache가 정말 필요한 데이터만 골라 담으면, oversubscribed HBM보다 훨씬 나음”</p></div>
+            <div class="mini"><b>제목</b><p>Bandwidth-Effective DRAM Cache for GPU s with Storage-Class Memory - HMS (이하 HMS)임.</p></div>
+            <div class="mini"><b>출처</b><p>HPCA 2024 / Jeongmin Hong, Sungjun Cho, Geonwoo Park, Wonhyuk Yang, Young-Ho Gong, Gwangsun Kim / POSTECH &amp; Soongsil University임.<br>DOI: <a href="https://doi.org/10.1109/HPCA57654.2024.00021">10.1109/HPCA57654.2024.00021</a>임.</p></div>
+            <div class="mini"><b>한 줄 직관</b><p>“SCM은 sequential read엔 HBM만큼 빠르지만 random write엔 치명적임 — 이 비대칭성을 3차원 score로 정량화해 DRAM cache가 정말 필요한 데이터만 골라 담으면, oversubscribed HBM보다 훨씬 낫다”는 직관임.</p></div>
           </div>
         </div>
-
-        <h3 style="font-size:21px">분류 태그</h3>
-        <p>
-          <code>#DRAM-cache</code> <code>#SCM</code> <code>#PCM</code> <code>#GPU-memory</code> <code>#HBM</code> <code>#HW-SW-codesign</code> <code>#memory-oversubscription</code> <code>#accelerator-simulation</code>
-        </p>
-
-        <h3 style="font-size:21px">핵심 기여</h3>
-        <div class="timeline">
-          <div class="day"><small>01</small><b>HMS</b><p>SCM die + DRAM die를 TSV로 3D stacking, 같은 channel에서 shared bus로 유연한 BW 배분</p></div>
-          <div class="day"><small>02</small><b>AMIL</b><p>DRAM cache row의 모든 tag를 마지막 column의 32 B data portion에 집약 → single column access로 row 전체 tag 취득, ECC 온전히 유지</p></div>
-          <div class="day"><small>03</small><b>SCM-aware Bypass</b><p>(spatial locality + write intensity → SCM penalty score) × access frequency → DRAM-affinity score의 2-level 비교 구조</p></div>
-          <div class="day"><small>04</small><b>CTC</b><p>L2 cache way의 일부를 tag cache로 repurpose, user-configurable 분할</p></div>
-          <div class="day"><small>05</small><b>Power / Mode</b><p>throttling(timing parameter 배가) + SLC/MLC/TLC 모드 전환으로 footprint 크기에 adaptive 대응</p></div>
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">분류 태그</h3>
+          <div class="meta-row" style="margin-top:8px">
+            <span class="pill"><code>#DRAM-cache</code></span>
+            <span class="pill"><code>#SCM</code></span>
+            <span class="pill"><code>#PCM</code></span>
+            <span class="pill"><code>#GPU-memory</code></span>
+            <span class="pill"><code>#HBM</code></span>
+            <span class="pill"><code>#HW-SW-codesign</code></span>
+            <span class="pill"><code>#memory-oversubscription</code></span>
+            <span class="pill"><code>#accelerator-simulation</code></span>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">핵심 기여</h3>
+          <ol>
+            <li><strong>HMS (Heterogeneous Memory Stack)</strong>: SCM die + DRAM die를 TSV로 3D stacking, 같은 channel에서 shared bus로 유연한 BW 배분함.</li>
+            <li><strong>AMIL (Aggregated Metadata-In-Last-Column)</strong>: DRAM cache row의 모든 tag를 마지막 column의 32 B data portion에 집약 → single column access로 row 전체 tag 취득, ECC 온전히 유지함.</li>
+            <li><strong>SCM-aware DRAM Cache Bypass Policy</strong>: (spatial locality + write intensity → SCM penalty score) × access frequency → DRAM-affinity score의 2-level 비교 구조임.</li>
+            <li><strong>CTC (Configurable Tag Cache)</strong>: L2 cache way의 일부를 tag cache로 repurpose, user-configurable 분할함.</li>
+            <li><strong>SCM power/mode management</strong>: throttling(timing parameter 배가) + SLC/MLC/TLC 모드 전환으로 footprint 크기에 adaptive 대응함.</li>
+          </ol>
         </div>
       </section>
 
       <section id="s-core" class="section">
         <div class="section-head">
-          <div>
-            <h2 style="font-size:27px">1. 논문 핵심 사항</h2>
-            <p class="section-note">GPU 메모리 용량 문제에서 SCM, DRAM Cache, Bypass Policy, CTC, AMIL로 이어지는 문제-해결 흐름 정리임</p>
-          </div>
-          <span class="tag info">Narrative</span>
+    <div>
+      <h2 style="font-size:27px">1. 논문 핵심 사항</h2>
+      <p class="section-note">GPU 메모리 용량 문제에서 SCM, DRAM Cache, Bypass Policy, CTC, AMIL로 이어지는 문제-해결 흐름 정리임.</p>
+    </div>
+    <span class="tag info">Problem-Solution Chain</span>
+  </div>
+        <div class="panel">
+          <h3 style="font-size:21px">논문: Bandwidth-Effective DRAM Cache for GPU s with Storage-Class Memory</h3>
+          <p><strong>1.1 해결하고자 한 핵심 문제:</strong> GPU의 메모리 용량 문제임.</p>
+          <ul>
+            <li>UVM, Multi-GPU를 사용해도 한계가 있음.</li>
+          </ul>
         </div>
-
-        <div class="two-col">
-          <div class="panel">
-            <h3 style="font-size:21px">1.1 해결하고자 한 핵심 문제</h3>
-            <ul>
-              <li>GPU의 메모리 용량 문제</li>
-              <li>UVM, Multi-GPU를 사용해도 한계가 있음</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h3 style="font-size:21px">1.2 핵심 아이디어</h3>
-            <p><strong>핵심 문제에 대한 해결책:</strong> <mark>[SCM]</mark> — <code>DRAM의 속도와 SSD의 용량의 이점을 가진 중간 단계 HW</code></p>
-            <ul>
-              <li>SCM을 메모리로 사용</li>
-              <li><strong>파생되는 문제 A:</strong> 긴 쓰기 지연 시간, 높은 에너지 소비 해결 필요</li>
-            </ul>
-          </div>
-        </div>
-
         <figure>
-          <img src="assets/Pasted image 20260619011528.png" alt="HMS 논문 핵심 문제와 해결책 흐름도">
-          <figcaption>그림 1. GPU 메모리 용량 문제 → SCM → DRAM Cache → Bypass Policy / CTC / AMIL로 이어지는 핵심 아이디어 흐름도</figcaption>
+          <img src="assets/Pasted image 20260619011528.png" alt="HMS 핵심 아이디어 흐름도">
+          <figcaption>그림 1. HMS 핵심 아이디어 흐름도 — GPU 메모리 용량 문제에서 SCM, DRAM Cache, Bypass Policy, CTC, AMIL로 이어지는 구조임.</figcaption>
         </figure>
-
-        <div class="experiment">
+        <div class="timeline">
+          <div class="day"><small>STEP 1</small><b>핵심 문제</b><p>GPU의 메모리 용량 문제이며, UVM과 Multi-GPU를 사용해도 한계가 있음.</p></div>
+          <div class="day"><small>STEP 2</small><b>핵심 해결책 · SCM</b><p><code>DRAM의 속도와 SSD의 용량의 이점을 가진 중간 단계 HW</code>인 SCM을 메모리로 사용함.</p></div>
+          <div class="day"><small>STEP 3</small><b>파생 문제 A</b><p>SCM 사용 시 긴 쓰기 지연 시간, 높은 에너지 소비를 해결해야 됨.</p></div>
+          <div class="day"><small>STEP 4</small><b>DRAM Cache</b><p>문제 A의 해결책으로 DRAM을 Cache로 만들어 사용함.</p></div>
+          <div class="day"><small>STEP 5</small><b>파생 문제 B</b><p>DRAM Cache thrashing과 외부 DRAM 태그 조회 트래픽이 대역폭 효율을 떨어뜨림.</p></div>
+        </div>
+        <div class="two-col" style="margin-top:14px">
           <div class="panel">
-            <h3 style="font-size:21px">문제 A에 대한 해결책 · DRAM Cache</h3>
+            <h3 style="font-size:21px">문제 B-1에 대한 해결책 · Bypass Policy</h3>
             <ul>
-              <li>이때 DRAM으로 Cache를 만들어 사용</li>
-              <li><strong>파생되는 문제 B-1:</strong> DRAM Cache가 쉽게 thrashing 상태가 되어 오히려 성능을 저하시키고 대역폭을 낭비하게 됨</li>
-              <li><strong>파생되는 문제 B-2:</strong> DRAM Cache 히트 여부 확인을 위해 매번 외부 DRAM에 태그를 조회해야 함</li>
-              <li>추가적인 태그 조회 트래픽이 실제 데이터 요청과 대역폭 경쟁을 벌여 전체적인 대역폭 효율 저하 발생</li>
+              <li>SCM-aware DRAM Cache <strong>Bypass Policy</strong>를 도입함.</li>
+              <li>성능 기여도가 낮은 데이터를 DRAM에 캐싱하지 않고 바로 SCM으로 보냄.</li>
             </ul>
           </div>
           <div class="panel">
-            <h3 style="font-size:21px">문제 B/C에 대한 해결책</h3>
-            <dl class="kv">
-              <dt>Bypass Policy</dt><dd>SCM-aware DRAM Cache Bypass Policy 도입, 성능 기여도가 낮은 데이터를 DRAM에 캐싱하지 않고 바로 SCM으로 보냄</dd>
-              <dt>CTC</dt><dd>Configurable Tag Cache. L2 Cache의 일부 공간을 태그 캐싱 용도로 재구성(repurpose)하여 온칩(on-chip)에서 빠르게 태그 조회</dd>
-              <dt>문제 C</dt><dd>CTC 미스 발생 가능. 이때 태그를 조회하기 위해 여러 번의 DRAM 접근 필요</dd>
-              <dt>AMIL</dt><dd>한 DRAM 로우(Row) 내의 모든 태그와 메타데이터를 마지막 컬럼(Last-column)에 집중적으로 배치</dd>
-            </dl>
-            <div class="callout"><b>AMIL의 직접 효과</b>단 한 번의 컬럼 접근으로 해당 로우의 모든 태그를 가져올 수 있게 함</div>
+            <h3 style="font-size:21px">문제 B-2에 대한 해결책 · CTC</h3>
+            <ul>
+              <li><strong>Configurable Tag Cache (CTC)</strong>를 사용함.</li>
+              <li>L2 Cache의 일부 공간을 태그 캐싱 용도로 재구성(repurpose)하여 온칩(on-chip)에서 빠르게 태그를 조회함.</li>
+              <li>파생되는 문제 C는 CTC 미스 발생 가능성임.</li>
+              <li>CTC 미스 발생 시 태그를 조회하기 위해 여러 번의 DRAM 접근이 필요함.</li>
+            </ul>
           </div>
         </div>
-
-        <h3 style="font-size:21px">1.3 Contribution이 뭔지</h3>
-        <div class="next-grid">
-          <div class="next">
-            <h3 style="font-size:21px">GPU 맞춤형 SCM-aware DRAM 캐시 설계</h3>
-            <ul>
-              <li>SCM의 물리적 특성인 긴 쓰기 지연 시간 및 높은 에너지 고려</li>
-              <li>워크로드의 접근 패턴인 공간 지역성, 접근 빈도 통합 고려</li>
-              <li>지능형 <strong>바이패스 정책(SCM-aware Bypass Policy)</strong> 최초 제안</li>
-            </ul>
-          </div>
-          <div class="next">
-            <h3 style="font-size:21px">태그 조회 효율 극대화</h3>
-            <ul>
-              <li><strong>Configurable Tag Cache (CTC)</strong></li>
-              <li><strong>Aggregated Metadata-In-Last-column (AMIL)</strong></li>
-            </ul>
-          </div>
-          <div class="next">
-            <h3 style="font-size:21px">성능 및 에너지 효율성 입증</h3>
-            <ul>
-              <li>기존의 HBM 기반 GPU 대비 성능 최대 12.5배, 평균 2.9배 향상</li>
-              <li>에너지 소비 최대 89.3%, 평균 48.1% 절감</li>
-            </ul>
-          </div>
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">문제 C에 대한 해결책 · AMIL</h3>
+          <ul>
+            <li><strong>Aggregated Metadata-In-Last-column (AMIL)</strong>을 사용함.</li>
+            <li>한 DRAM 로우(Row) 내의 모든 태그와 메타데이터를 마지막 컬럼(Last-column)에 집중적으로 배치함.</li>
+            <li>단 한 번의 컬럼 접근으로 해당 로우의 모든 태그를 가져올 수 있게 함.</li>
+          </ul>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">1.3 Contribution이 뭔지</h3>
+          <ul>
+            <li>GPU 맞춤형 S<strong>CM-aware DRAM 캐시</strong> 설계임.
+              <ul>
+                <li>SCM의 물리적 특성(긴 쓰기 지연 시간 및 높은 에너지)과 워크로드의 접근 패턴(공간 지역성, 접근 빈도)을 통합적으로 고려한 지능형 <strong>바이패스 정책(SCM-aware Bypass Policy)</strong>을 최초로 제안함.</li>
+              </ul>
+            </li>
+            <li>태그 조회 효율 극대화함.
+              <ul>
+                <li><strong>Configurable Tag Cache (CTC)</strong> 적용함.</li>
+                <li><strong>Aggregated Metadata-In-Last-column (AMIL)</strong> 적용함.</li>
+              </ul>
+            </li>
+            <li>위 사항들을 도입하여 성능 및 에너지 효율성 입증함.
+              <ul>
+                <li>기존의 HBM 기반 GPU 대비 성능을 최대 12.5배(평균 2.9배) 향상함.</li>
+                <li>에너지 소비를 최대 89.3%(평균 48.1%) 절감함.</li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </section>
 
-      <section id="s-need" class="section">
+      <section id="s-needed" class="section">
         <div class="section-head">
-          <div>
-            <h2 style="font-size:27px">2. 나한테 필요한 정보</h2>
-            <p class="section-note">Accel-Sim을 어떻게 수정했는지 확인하기 위해 논문 설명과 실제 코드 구조를 분리해서 정리한 섹션임</p>
-          </div>
-          <span class="tag warn">Code Analysis</span>
+    <div>
+      <h2 style="font-size:27px">2. 나한테 필요한 정보</h2>
+      <p class="section-note">HMS가 Accel-sim을 어떻게 수정했는지 파악하기 위해 논문 설명과 실제 코드 구조를 대조한 섹션임.</p>
+    </div>
+    <span class="tag warn">Code Reading Needed</span>
+  </div>
+        <div class="panel">
+          <h3 style="font-size:21px">필요 정보</h3>
+          <p>Accel-sim 어떻게 수정했는지 확인 필요.</p>
+          <h3 style="font-size:21px">2.1 논문에서 설명한 내용</h3>
+          <blockquote><p>“We integrated Accel-sim with a UM model [46] and Ramulator [77] for simulation.”</p></blockquote>
+          <p>관련 설명은 위 한 문장이 다임. 코드를 직접 봐야 알 수 있음.</p>
         </div>
-
-        <p><strong>필요 정보:</strong> Accel-sim 어떻게 수정했는지</p>
-
-        <h3 style="font-size:21px">2.1 논문에서 설명한 내용</h3>
-        <blockquote>
-          <p>“We integrated Accel-sim with a UM model [46] and Ramulator [77] for simulation.”</p>
-        </blockquote>
-        <p>관련 설명 위 한 문장이 다임... 코드를 직접 봐야 알 수 있음</p>
-
-        <h3 style="font-size:21px">2.2 코드 구조</h3>
-        <h4 style="font-size:18px">2.2.1 레포 구조 파악</h4>
-        <p><strong>핵심 발견:</strong> 3-repo 구조</p>
-        <div class="codecard">
-          <div class="codecard__name">repo structure</div>
-          <pre><code>/home/junon/HMS/
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">2.2 코드 구조</h3>
+          <h4 style="font-size:18px">2.2.1 레포 구조 파악</h4>
+          <p>핵심 발견: 3-repo 구조임.</p>
+          <div class="codecard"><div class="codecard__name">/home/junon/HMS/ repository map</div><pre><code>/home/junon/HMS/
 ├── HMS/accelsim_HMS/          ← trace front-end (PSAL fork)
 │   └── gpu-simulator/
 │       ├── main.cc            ← cudaMalloc/page init, GMMU 연동
@@ -500,236 +499,243 @@
             ├── HMSRequest.cc/h     ← request 생성
             ├── HMS.cc/h            ← 타이밍 파라미터
             ├── PCM.cc/h            ← SCM 모델
-            └── HBM.cc/h            ← HBM 모델</code></pre>
+            └── HBM.cc/h            ← HBM 모델</code></pre></div>
+          <blockquote><p><code>gpgpu-sim_HMS</code>는 <code>setup_environment.sh</code>가 빌드 시 자동으로 clone함. 원본 대비 accelsim_HMS가 추가/수정한 내용은 주로 Jenkins CI 파일, <code>generate_pagetable.ipynb</code>, trace-driven 레이어이며 DRAM cache 로직은 전부 gpgpu-sim_HMS에 있음.</p></blockquote>
+          <p>이 두 파일이 핵심임.</p>
+          <div class="codecard"><div class="codecard__name">핵심 파일</div><pre><code>ramulator/HMSController.cc  ← DRAM cache 전체 로직
+gpgpu-sim/gmmu.cc           ← page fault, PCIe, prefetch</code></pre></div>
         </div>
-        <blockquote>
-          <p><code>gpgpu-sim_HMS</code>는 <code>setup_environment.sh</code>가 빌드 시 자동으로 clone함. 원본 대비 accelsim_HMS가 추가/수정한 내용은 주로 Jenkins CI 파일, <code>generate_pagetable.ipynb</code>, trace-driven 레이어이며 DRAM cache 로직은 전부 gpgpu-sim_HMS에 있음</p>
-        </blockquote>
-
-        <p>이 두 파일이 핵심임</p>
-        <div class="codecard">
-          <div class="codecard__name">핵심 파일</div>
-          <pre><code>ramulator/HMSController.cc  ← DRAM cache 전체 로직
-gpgpu-sim/gmmu.cc           ← page fault, PCIe, prefetch</code></pre>
+        <div class="panel" style="margin-top:14px">
+          <h4 style="font-size:18px">2.2.2 accelsim_HMS vs 원본 주요 차이 (파일 수준)</h4>
+          <table>
+            <thead><tr><th>변경 유형</th><th>주요 내용</th></tr></thead>
+            <tbody>
+              <tr><td><strong>추가</strong></td><td><code>generate_pagetable.ipynb</code>, <code>.travis.yml</code>, Jenkinsfile 3개</td></tr>
+              <tr><td><strong>삭제</strong></td><td><code>util/</code> 전체, <code>python_wrapper/</code>, CMakeLists.txt 전체, GitHub Actions</td></tr>
+              <tr><td><strong>수정</strong></td><td><code>main.cc</code>, <code>trace_driven.cc/h</code>, <code>trace_parser.cc/h</code>, ISA_Def 헤더 6개, 설정 파일 4개</td></tr>
+              <tr><td><strong>제거된 GPU 설정</strong></td><td>SM7_GV100, SM80_A100, SM86_RTX3070</td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <h4 style="font-size:18px">2.2.2 accelsim_HMS vs 원본 주요 차이 (파일 수준)</h4>
-        <table>
-          <thead>
-            <tr><th>변경 유형</th><th>주요 내용</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><strong>추가</strong></td><td><code>generate_pagetable.ipynb</code>, <code>.travis.yml</code>, Jenkinsfile 3개</td></tr>
-            <tr><td><strong>삭제</strong></td><td><code>util/</code> 전체, <code>python_wrapper/</code>, CMakeLists.txt 전체, GitHub Actions</td></tr>
-            <tr><td><strong>수정</strong></td><td><code>main.cc</code>, <code>trace_driven.cc/h</code>, <code>trace_parser.cc/h</code>, ISA_Def 헤더 6개, 설정 파일 4개</td></tr>
-            <tr><td><strong>제거된 GPU 설정</strong></td><td>SM7_GV100, SM80_A100, SM86_RTX3070</td></tr>
-          </tbody>
-        </table>
-
-        <h3 style="font-size:21px">2.3 내가 잘못 이해한 내용</h3>
-        <div class="log-list">
-          <div class="log"><div class="kind">Misread 1</div><p>HMS 레포 자체에 DRAM cache 코드가 있을 거라고 생각했는데, 실제로는 <code>setup_environment.sh</code>가 실행 시 <code>gpgpu-sim_HMS</code>를 별도로 clone해서 <code>/tmp/</code>에 까는 구조였음</p></div>
-          <div class="log"><div class="kind">Lesson 1</div><p>즉 진짜 수정 코드는 레포 밖에 있음</p></div>
-          <div class="log"><div class="kind">Misread 2</div><p>AMIL, RHBM 같은 논문 용어가 코드에도 그대로 있을 거라 생각했는데, 실제로는 기능적 등가물이 다른 이름으로 구현되어 있음</p></div>
+        <div class="two-col" style="margin-top:14px">
+          <div class="panel">
+            <h3 style="font-size:21px">2.3 내가 잘못 이해한 내용</h3>
+            <ul>
+              <li>HMS 레포 자체에 DRAM cache 코드가 있을 거라고 생각했음.
+                <ul>
+                  <li>실제로는 <code>setup_environment.sh</code>가 실행 시 <code>gpgpu-sim_HMS</code>를 별도로 clone해서 <code>/tmp/</code>에 까는 구조였음.</li>
+                  <li>즉 진짜 수정 코드는 레포 밖에 있음.</li>
+                </ul>
+              </li>
+              <li>AMIL, RHBM 같은 논문 용어가 코드에도 그대로 있을 거라 생각했지만, 실제로는 기능적 등가물이 다른 이름으로 구현되어 있음.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3 style="font-size:21px">2.5 이번에 알아가는 내용</h3>
+            <ul>
+              <li>진짜 수정 코드는 전부 <code>gpgpu-sim_HMS/src/</code> 안에 있음.</li>
+              <li>핵심 파일은 두 개로 압축됨.
+                <ul>
+                  <li><code>ramulator/HMSController.cc</code>: DRAM cache 전체 로직 (bypass policy, tag cache, fill)임.</li>
+                  <li><code>gpgpu-sim/gmmu.cc</code>: page fault, PCIe 지연, prefetch임.</li>
+                </ul>
+              </li>
+              <li>모든 memory request는 <code>HMSController::enqueue()</code>를 첫 관문으로 통과함.</li>
+              <li>여기서 주소 기반으로 DRAM/SCM/PCIe 경로를 분기함.</li>
+              <li>HMS 전체를 관통하는 하나의 패턴은 <strong>“판단 → 큐잉 → tick에서 실행”</strong>임.</li>
+              <li>bypass policy도, prefetch도 전부 이 패턴으로 동작함.</li>
+            </ul>
+          </div>
         </div>
-
-        <h3 style="font-size:21px">2.5 이번에 알아가는 내용</h3>
-        <ul>
-          <li>진짜 수정 코드는 전부 <code>gpgpu-sim_HMS/src/</code> 안에 있음</li>
-          <li>핵심 파일은 두 개로 압축됨</li>
-          <li><code>ramulator/HMSController.cc</code>: DRAM cache 전체 로직 (bypass policy, tag cache, fill)</li>
-          <li><code>gpgpu-sim/gmmu.cc</code>: page fault, PCIe 지연, prefetch</li>
-          <li>모든 memory request는 <code>HMSController::enqueue()</code>를 첫 관문으로 통과함</li>
-          <li>여기서 주소 기반으로 DRAM/SCM/PCIe 경로를 분기함</li>
-          <li>HMS 전체를 관통하는 하나의 패턴이 있음: <strong>“판단 → 큐잉 → tick에서 실행”</strong></li>
-          <li>bypass policy도, prefetch도 전부 이 패턴으로 동작함</li>
-        </ul>
       </section>
 
       <section id="s-takeaway" class="section">
         <div class="section-head">
-          <div>
-            <h2 style="font-size:27px">3. 내가 논문에서 얻어갈 내용</h2>
-            <p class="section-note">HMS 구현 패턴을 내 Markov prefetch scheduler와 HVRPController 설계로 연결하는 섹션임</p>
+    <div>
+      <h2 style="font-size:27px">3. 내가 논문에서 얻어갈 내용</h2>
+      <p class="section-note">HMS 코드 구조에서 내 Markov prefetch scheduler 구현에 재사용할 수 있는 패턴을 도출한 섹션임.</p>
+    </div>
+    <span class="tag good">Actionable Pattern</span>
+  </div>
+        <div class="summary-grid">
+          <div class="big-insight">
+            <div>
+              <div class="eyebrow" style="color:#93c5fd">Implementation Pattern</div>
+              <h3 style="font-size:21px">“판단 → 큐잉 → tick 실행” 패턴을 Markov prefetch scheduler에도 그대로 적용 가능함.</h3>
+              <p><code>post_process_cache_miss() → fill_pending queue → tick()</code> 흐름을 재활용하는 방향임.</p>
+            </div>
+            <div class="meta-row">
+              <span class="pill" style="background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.2)">Queue-based Scheduler</span>
+            </div>
           </div>
-          <span class="tag good">Actionable</span>
+          <div class="mini-cards">
+            <div class="mini"><b>판단</b><p>요청이 들어온 시점에, 이 요청을 어떻게 처리할지 결정하는 단계임.</p></div>
+            <div class="mini"><b>큐잉</b><p><strong>큐에 넣는</strong> 단계임.</p></div>
+            <div class="mini"><b>실행</b><p><code>tick()</code> 함수가 큐에서 요청을 꺼내서 실제로 처리하는 단계임.</p></div>
+          </div>
         </div>
-
-        <div class="callout"><b>핵심 재사용 패턴</b><strong>“판단 → 큐잉 → tick 실행” 패턴</strong>을 내 Markov prefetch scheduler에도 적용 가능함. <code>post_process_cache_miss() → fill_pending queue → tick()</code> 흐름을 그대로 재활용하면 됨</div>
-
-        <div class="two-col">
+        <div class="two-col" style="margin-top:14px">
           <div class="panel">
             <h3 style="font-size:21px">HMS 논문 코드에서 배운 패턴</h3>
-            <pre><code>실제 GPU 요청
+            <div class="codecard"><div class="codecard__name">HMSController 흐름</div><pre><code>실제 GPU 요청
     ↓
 HMSController::enqueue()   ← 첫 관문, 경로 판단
     ↓
 [DRAM / SCM / PCIe] 분기
     ↓
-tick()에서 실행            ← "판단 → 큐잉 → tick 실행" 패턴</code></pre>
+tick()에서 실행            ← &quot;판단 → 큐잉 → tick 실행&quot; 패턴</code></pre></div>
           </div>
           <div class="panel">
-            <h3 style="font-size:21px">내 상황에서 재사용 가능한 패턴</h3>
-            <pre><code>Attention 계산 요청
+            <h3 style="font-size:21px">내 상황에서 재사용 가능한 흐름</h3>
+            <div class="codecard"><div class="codecard__name">HVRPController 흐름</div><pre><code>Attention 계산 요청
     ↓
 HVRPController::enqueue()  ← head_id 판별 + SRAM/HBM 분기
     ↓
 [SRAM(on-chip table) / HBM(KV cache)] 분기
     ↓
-tick()에서 prefetch 실행</code></pre>
+tick()에서 prefetch 실행</code></pre></div>
           </div>
         </div>
-
-        <h3 style="font-size:21px">추가로 가져갈 포인트</h3>
-        <div class="log-list">
-          <div class="log"><div class="kind">PCIE_VALIDATE 큐</div><p>head를 fetch할 경로가 이미 구현되어 있음 (확인 필요)</p></div>
-          <div class="log"><div class="kind">Trace 재사용 전략</div><p>HMS도 SASS trace 그대로 쓰고 page 메타데이터만 별도로 붙이는 방식임</p></div>
-          <div class="log"><div class="kind">내 연구 적용</div><p>주소 → head_id 매핑 파일만 따로 만들면 trace 재생성 없이 가능</p></div>
+        <div class="two-col" style="margin-top:14px">
+          <div class="panel">
+            <h3 style="font-size:21px">PCIE_VALIDATE 큐</h3>
+            <ul>
+              <li>head를 fetch할 경로가 이미 구현되어 있음.</li>
+              <li>확인 필요함.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3 style="font-size:21px">Trace 재사용 전략</h3>
+            <ul>
+              <li>HMS도 SASS trace 그대로 쓰고 page 메타데이터만 별도로 붙이는 방식임.</li>
+              <li>내 연구도 주소 → head_id 매핑 파일만 따로 만들면 trace 재생성 없이 가능함.</li>
+            </ul>
+          </div>
         </div>
       </section>
 
       <section id="s-conclusion" class="section">
         <div class="section-head">
-          <div>
-            <h2 style="font-size:27px">4. 나만의 결론</h2>
-            <p class="section-note">Accel-Sim/GPGPU-Sim을 재활용하면서 내 연구용 Predictor SRAM, KV Prefetch, Selective KV Load를 어디에 넣을지 정리한 섹션임</p>
+    <div>
+      <h2 style="font-size:27px">4. 나만의 결론</h2>
+      <p class="section-note">Accel-sim/GPGPU-Sim 구조를 유지한 채 필요한 기능을 추가 주입하는 구현 방향성 정리임.</p>
+    </div>
+    <span class="tag good">Next Architecture</span>
+  </div>
+        <div class="panel">
+          <h3 style="font-size:21px">4.1 수정 방향성</h3>
+          <p>구조 자체는 Accel-sim/GPGPU-sim 그대로 재활용하고, 필요한 추가로 주입하는 방식으로 접근하면 됨.</p>
+          <h4 style="font-size:18px">수정 범위 요약</h4>
+          <table>
+            <thead><tr><th>Layer</th><th>수정 내용</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Layer 1 — Config 수정만으로 끝나는 부분</strong></td><td>Predictor SRAM 용량·레이턴시 파라미터를 새 캐시가 기존 L1/L2 계층과 다른 레이턴시로 갖도록 설정함. HBM 대역폭 파라미터를 KV 접근 baseline 설정에 사용함. 이는 <code>.config</code> 파일 수정으로 처리 가능함.</td></tr>
+              <tr><td><strong>Layer 2 — GPGPU-Sim C++ 코드 수정 (핵심 기여)</strong></td><td>HMS의 <code>HMSController.cc</code>에 대응되는 구현으로 <strong>Predictor SRAM Controller</strong>와 <strong>KV Prefetch Scheduler</strong> 두 파일을 고려함.</td></tr>
+              <tr><td><strong>Layer 3 — ISA Def 수정</strong></td><td>기존 LD/ST로 KV 접근을 모델링하는 한 초기 단계에서 불필요함. Prefetch를 memory controller가 투명하게 처리하면 기존 SASS trace 그대로 사용 가능함.</td></tr>
+            </tbody>
+          </table>
+          <div class="callout"><b>Layer 2 세부 구현</b>
+            <ol>
+              <li><strong>Predictor SRAM Controller</strong> 신규 작성: Markov 테이블 조회 로직임. <code>enqueue()</code> 받아서 head_id → table hit/miss 판별 → tick에서 결과 반환함.</li>
+              <li><strong>KV Prefetch Scheduler</strong> (<code>gmmu.cc</code> 패턴 참고): 테이블 히트 시 다음 토큰의 KV를 미리 HBM에서 fetch함. HMS의 <code>PCIE_VALIDATE</code> 큐 패턴을 여기서 재활용할 수 있어 CPU-resident 데이터 fetch 경로가 이미 구현되어 있으니, 분기 조건만 head_id 기반으로 추가하면 됨.</li>
+            </ol>
           </div>
-          <span class="tag warn">설계 검증 필요</span>
         </div>
-
-        <h3 style="font-size:21px">4.1 수정 방향성</h3>
-        <p>구조 자체는 Accel-sim/GPGPU-sim 그대로 재활용하고, 필요한 추가를 주입하는 방식으로 접근하면 됨</p>
-
-        <div class="next-grid">
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">4.2 [핵심] 구현의 방향성을 잡아보자</h3>
+          <p>구현할 내용은 크게 세 개임.</p>
+          <table>
+            <thead><tr><th>대상</th><th>평가 내용</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Predictor cache</strong></td><td>용량, lookup latency, hit rate, DRAM fallback, 면적, 전력</td></tr>
+              <tr><td><strong>KV prefetch controller</strong></td><td>bandwidth 활용률, latency hiding, wasted prefetch</td></tr>
+              <tr><td><strong>Selective KV load</strong></td><td>memory traffic 감소량, decode latency 변화</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="next-grid" style="margin-top:14px">
           <div class="next">
-            <h3 style="font-size:21px">Layer 1 — Config 수정만으로 끝나는 부분</h3>
+            <h3 style="font-size:21px">4.2.1 Head마다 달라지는 KV 이동 표현</h3>
             <ul>
-              <li>Predictor SRAM 용량·레이턴시 파라미터 설정</li>
-              <li>새 캐시를 기존 L1/L2 계층과 다른 레이턴시로 설정</li>
-              <li>HBM 대역폭 파라미터 설정</li>
-              <li>KV 접근 baseline 설정</li>
-              <li><code>.config</code> 파일 수정으로 처리 가능</li>
+              <li>ISA 수정 없이, 메모리 컨트롤러 레벨에서 mask로 처리하는 방식 생각중임.</li>
+              <li><strong>구체적으로??</strong> KV cache에서 선택된 8개(K=8일 때 가정) head의 데이터에만 유효성 비트를 세우고, 나머지 8개 head의 fetch 요청을 컨트롤러 레벨에서 suppress함.</li>
+              <li>SASS trace에 있는 기존 LD 명령어를 그대로 쓰면서, memory controller가 실제로 HBM에 나가는 트래픽만 줄이는 효과를 만들 수 있지 않을까 싶음.</li>
             </ul>
           </div>
           <div class="next">
-            <h3 style="font-size:21px">Layer 2 — GPGPU-Sim C++ 코드 수정</h3>
+            <h3 style="font-size:21px">4.2.2 Predictor SRAM 모델링</h3>
             <ul>
-              <li>핵심 기여에 해당하는 수정 범위</li>
-              <li><strong>Predictor SRAM Controller</strong> 신규 작성</li>
-              <li><strong>KV Prefetch Scheduler</strong> 구현</li>
-              <li>HMS의 <code>HMSController.cc</code>에 대응되는 파일군으로 이해 가능</li>
+              <li>기존 L1 캐시 구조를 별도로 하나 더 만들고, 용량·레이턴시·포트 수만 SRAM 스펙에 맞게 Config에서 조정하는 방식 생각중임.</li>
+              <li><strong>구체적으로??</strong> Accel-sim의 캐시 구조는 용량, associativity, hit/miss latency를 config 파라미터로 받음.</li>
+              <li>여기에 “Predictor SRAM”이라는 이름의 새 캐시 인스턴스를 추가함.</li>
+              <li>레이턴시는 SRAM 면적/전력을 먼저 추정하고, 거기서 나온 access latency를 config에 주입함. 어케 추정함?? 확인 필요함.</li>
+              <li>테이블 lookup 요청이 SRAM 인스턴스에 먼저 들어오고, miss 시에만 DRAM으로 fallback하는 경로를 만듦. 실제로는 테이블이 SRAM에 완전히 올라간다고 가정하여 DRAM fallback은 발생 안 한다고 가정함.</li>
             </ul>
           </div>
           <div class="next">
-            <h3 style="font-size:21px">Layer 3 — ISA Def 수정</h3>
+            <h3 style="font-size:21px">4.2.3 Markov 조회와 KV Prefetch 연결</h3>
             <ul>
-              <li>기존 LD/ST로 KV 접근을 모델링하는 한 초기 단계에서 불필요</li>
-              <li>Prefetch를 memory controller가 투명하게 처리하면 기존 SASS trace 그대로 사용 가능</li>
+              <li>조회 결과가 나오기 전에 prefetch를 언제 트리거하냐, 레이턴시 겹침을 어떻게 모델링할 것인가가 핵심임.</li>
+              <li>HMS의 “판단 → 큐잉 → tick 실행” 패턴을 그대로 써도 될 듯함.</li>
+              <li>조회 요청을 큐에 넣는 순간 prefetch 큐도 동시에 세우는 방식 생각중임.</li>
+              <li><strong>구체적으로&gt;??</strong> 토큰 t의 attention 시작 시점에 SRAM 조회 요청을 enqueue함.</li>
+              <li>SRAM hit이 확인되는 순간(hit latency 후) KV prefetch 큐에 해당 head들의 HBM 주소를 넣음.</li>
+              <li>miss 시에는 원본 라우터 fallback 경로를 사용함 — 기존 HBM 접근 경로 그대로임.</li>
             </ul>
           </div>
-        </div>
-
-        <h3 style="font-size:21px">Layer 2 세부 내용</h3>
-        <div class="two-col">
-          <div class="panel">
-            <h3 style="font-size:21px">1. Predictor SRAM Controller</h3>
-            <p>Markov 테이블 조회 로직 신규 작성. <code>enqueue()</code>를 받아서 head_id → table hit/miss 판별 → tick에서 결과 반환하는 구조임</p>
-          </div>
-          <div class="panel">
-            <h3 style="font-size:21px">2. KV Prefetch Scheduler</h3>
-            <p><code>gmmu.cc</code> 패턴 참고. 테이블 히트 시 다음 토큰의 KV를 미리 HBM에서 fetch하는 구조임</p>
-            <p>HMS의 <code>PCIE_VALIDATE</code> 큐 패턴을 여기서 재활용할 수 있음 — CPU-resident 데이터 fetch 경로가 이미 구현되어 있으니, 분기 조건만 head_id 기반으로 추가하면 됨</p>
-          </div>
-        </div>
-
-        <h3 style="font-size:21px">4.2 [핵심] 구현의 방향성을 잡아보자</h3>
-        <p>구현할 내용 크게 세 개임</p>
-        <table>
-          <thead>
-            <tr><th>대상</th><th>평가 내용</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Predictor cache</td><td>용량, lookup latency, hit rate, DRAM fallback, 면적, 전력</td></tr>
-            <tr><td>KV prefetch controller</td><td>bandwidth 활용률, latency hiding, wasted prefetch</td></tr>
-            <tr><td>Selective KV load</td><td>memory traffic 감소량, decode latency 변화</td></tr>
-          </tbody>
-        </table>
-
-        <h4 style="font-size:18px">4.2.1 Head마다 달라지는 kv 이동을 시뮬레이터에서 어떻게 표현?</h4>
-        <div class="panel">
-          <p>ISA 수정 없이, 메모리 컨트롤러 레벨에서 mask로 처리하는 방식 생각중</p>
-          <p><strong>구체적으로:</strong></p>
-          <ul>
-            <li>KV cache에서 선택된 8개(K=8일 때 가정) head의 데이터에만 유효성 비트를 세우고, 나머지 8개 head의 fetch 요청을 컨트롤러 레벨에서 suppress</li>
-            <li>이렇게 하면 SASS trace에 있는 기존 LD 명령어를 그대로 쓰면서, memory controller가 실제로 HBM에 나가는 트래픽만 줄이는 효과를 만들 수 있지 않을까 싶음</li>
-          </ul>
-        </div>
-
-        <h4 style="font-size:18px">4.2.2 Predictor SRAM을 시뮬레이터에서 어떻게 모델링할 거냐?</h4>
-        <div class="panel">
-          <ul>
-            <li>기존 L1 캐시 구조를 별도로 하나 더 만들고</li>
-            <li>용량·레이턴시·포트 수만 SRAM 스펙에 맞게 Config에서 조정하는 방식 생각중</li>
-          </ul>
-          <p><strong>구체적으로:</strong></p>
-          <ul>
-            <li>Accel-sim의 캐시 구조는 용량, associativity, hit/miss latency를 config 파라미터로 받음</li>
-            <li>여기에 “Predictor SRAM”이라는 이름의 새 캐시 인스턴스를 추가</li>
-            <li>레이턴시는 SRAM 면적/전력을 먼저 추정하고, 거기서 나온 access latency를 config에 주입함 (어케 추정함??) (확인 필요)</li>
-            <li>테이블 lookup 요청이 이 SRAM 인스턴스에 먼저 들어오고, miss 시에만 DRAM으로 fallback하는 경로를 만들기</li>
-            <li>DRAM fallback은 실제로는 발생 안 한다고 가정 — 테이블이 SRAM에 완전히 올라간다고 가정</li>
-          </ul>
-        </div>
-
-        <h4 style="font-size:18px">4.2.3 Markov 테이블 조회와 KV Prefetch를 어떻게 파이프라인으로 연결할 거냐?</h4>
-        <div class="panel">
-          <p>조회 결과가 나오기 전에 prefetch를 언제 트리거하냐, 레이턴시 겹침을 어떻게 모델링할 것인가?</p>
-          <ul>
-            <li>HMS의 “판단 → 큐잉 → tick 실행” 패턴을 그대로 써도 될 듯</li>
-            <li>조회 요청을 큐에 넣는 순간 prefetch 큐도 동시에 세우는 방식 생각중</li>
-          </ul>
-          <p><strong>구체적으로:</strong></p>
-          <ul>
-            <li>토큰 t의 attention 시작 시점에 SRAM 조회 요청을 enqueue</li>
-            <li>SRAM hit이 확인되는 순간(hit latency 후) KV prefetch 큐에 해당 head들의 HBM 주소를 넣기</li>
-            <li>miss 시에는 원본 라우터 fallback 경로 — 이건 기존 HBM 접근 경로 그대로</li>
-          </ul>
         </div>
       </section>
 
-      <section id="s-terms" class="section">
+      <section id="s-appendix" class="section">
         <div class="section-head">
-          <div>
-            <h2 style="font-size:27px">5. 기타 정리할 내용</h2>
-            <p class="section-note">HMS 논문 및 구현 방향성 이해에 필요한 용어를 정리한 섹션임</p>
-          </div>
-          <span class="tag info">Glossary</span>
+    <div>
+      <h2 style="font-size:27px">5. 기타 정리할 내용</h2>
+      <p class="section-note">HMS 논문 리딩과 구현 논의를 위해 필요한 용어와 영어 표현 정리임.</p>
+    </div>
+    <span class="tag info">Reference</span>
+  </div>
+        <div class="panel">
+          <h3 style="font-size:21px">5.1 용어 정리</h3>
+          <table>
+            <thead><tr><th>용어</th><th>의미 (Description)</th><th>관련 기술</th></tr></thead>
+            <tbody>
+              <tr><td><strong>SCM</strong></td><td>Storage-Class Memory: DRAM과 Flash 사이의 특성을 가진 비휘발성 메모리. 예: PCM</td><td>시스템 기반</td></tr>
+              <tr><td><strong>HMS</strong></td><td>Heterogeneous Memory Stack: DRAM과 SCM을 3D 적층 구조로 결합한 메모리 조직</td><td>시스템 구조</td></tr>
+              <tr><td><strong>TAD</strong></td><td>Tag-And-Data: 태그와 데이터를 함께 저장하는 전통적인 DRAM 캐시 조직 방식</td><td>AMIL 비교군</td></tr>
+              <tr><td><strong>CTC</strong></td><td>Configurable Tag Cache: L2 캐시의 일부를 DRAM 캐시 태그 저장소로 전환하는 기법</td><td>태그 조회 최적화</td></tr>
+              <tr><td><strong>AMIL</strong></td><td>Aggregated Metadata-In-Last-column: 로우 내 마지막 컬럼에 메타데이터를 집중 배치하는 구조</td><td>태그 조회 최적화</td></tr>
+              <tr><td><strong>Row Buffer Locality</strong></td><td>동일 로우 내의 데이터를 연속적으로 접근하여 성능을 높이는 척도</td><td>SCM penalty</td></tr>
+              <tr><td><strong>UM</strong></td><td>Unified Memory: CPU/GPU가 단일 주소 공간을 공유하며 자동 데이터 이동을 수행하는 방식</td><td>배경 지식</td></tr>
+              <tr><td><strong>MSHR</strong></td><td>Miss Status Holding Register: 캐시 미스 발생 시 보류 중인 요청을 관리하는 하드웨어 구조</td><td>구현 세부</td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <h3 style="font-size:21px">5.1 용어 정리</h3>
-        <table>
-          <thead>
-            <tr><th>용어</th><th>의미 (Description)</th><th>관련 기술</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>SCM</td><td>Storage-Class Memory: DRAM과 Flash 사이의 특성을 가진 비휘발성 메모리. 예: PCM</td><td>시스템 기반</td></tr>
-            <tr><td>HMS</td><td>Heterogeneous Memory Stack: DRAM과 SCM을 3D 적층 구조로 결합한 메모리 조직</td><td>시스템 구조</td></tr>
-            <tr><td>TAD</td><td>Tag-And-Data: 태그와 데이터를 함께 저장하는 전통적인 DRAM 캐시 조직 방식</td><td>AMIL 비교군</td></tr>
-            <tr><td>CTC</td><td>Configurable Tag Cache: L2 캐시의 일부를 DRAM 캐시 태그 저장소로 전환하는 기법</td><td>태그 조회 최적화</td></tr>
-            <tr><td>AMIL</td><td>Aggregated Metadata-In-Last-column: 로우 내 마지막 컬럼에 메타데이터를 집중 배치하는 구조</td><td>태그 조회 최적화</td></tr>
-            <tr><td>Row Buffer Locality</td><td>동일 로우 내의 데이터를 연속적으로 접근하여 성능을 높이는 척도</td><td>SCM penalty</td></tr>
-            <tr><td>UM</td><td>Unified Memory: CPU/GPU가 단일 주소 공간을 공유하며 자동 데이터 이동을 수행하는 방식</td><td>배경 지식</td></tr>
-            <tr><td>MSHR</td><td>Miss Status Holding Register: 캐시 미스 발생 시 보류 중인 요청을 관리하는 하드웨어 구조</td><td>구현 세부</td></tr>
-          </tbody>
-        </table>
+        <div class="panel" style="margin-top:14px">
+          <h3 style="font-size:21px">5.2 논문 리딩을 위한 알아두면 좋은 영어 표현</h3>
+          <table>
+            <thead><tr><th>영어 표현</th><th>뜻</th><th>사용 예시 (본문 변형)</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Mandate</strong></td><td>~을 필수로 요구하다</td><td>“Workloads that mandate memory oversubscription.”</td></tr>
+              <tr><td><strong>Capture</strong></td><td>데이터를 수용하다 / 보관하다 / 포함하다</td><td>“The GPU can capture a larger fraction of the memory footprint.”</td></tr>
+              <tr><td><strong>Repurpose</strong></td><td>재사용하다 / 용도를 바꾸다</td><td>“Repurposing part of the L2 cache to cache DRAM tags.”</td></tr>
+              <tr><td><strong>Curtail</strong></td><td>축소하다 / 억제하다</td><td>“SCM throttling to curtail power consumption.”</td></tr>
+              <tr><td><strong>Amortize</strong></td><td>시간이나 비용을 여러 접근에 나누어 상쇄하다</td><td>“Amortize the long activation latency of SCM.”</td></tr>
+              <tr><td><strong>Orthogonal to</strong></td><td>~와 독립적인 / 상관없는</td><td>“These approaches are orthogonal to our design.”</td></tr>
+              <tr><td><strong>Benefit from</strong></td><td>~로부터 이점을 얻다 / 혜택을 받다</td><td>“Workloads with high BW demand benefit more from CTC.”</td></tr>
+              <tr><td><strong>Be pronounced</strong></td><td>현상이나 효과가 두드러지다</td><td>“The speedup was especially pronounced for graph workloads.”</td></tr>
+              <tr><td><strong>Account for</strong></td><td>~의 비율을 차지하다 / ~에 해당하다</td><td>“Last column accounts for a very small fraction of data.”</td></tr>
+              <tr><td><strong>Sublinear / Superlinear</strong></td><td>선형 미만 / 선형 초과로 증가하는</td><td>“They superlinearly increase system cost.”</td></tr>
+              <tr><td><strong>Mitigate</strong></td><td>위험이나 영향을 완화하다</td><td>“Effectively mitigate the thermal issue.”</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
     </main>
   </div>
 
-  <p class="footer">#DRAM-cache · #SCM · #PCM · #GPU-memory · #HBM · #HW-SW-codesign · #memory-oversubscription · #accelerator-simulation · 2026-W25</p>
+  <p class="footer"><code>#DRAM-cache</code> · <code>#SCM</code> · <code>#GPU-memory</code> · <code>#Accel-sim</code> · <code>#HMS</code> · 2026-W25</p>
 </div>
 
-<!-- KaTeX 수식 자동 렌더 -->
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[
